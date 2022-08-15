@@ -1,5 +1,4 @@
 from numpy import linspace, meshgrid, array, arctan
-import matplotlib.pyplot as plt
 from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
@@ -119,65 +118,3 @@ class AlgorithmETH:
 		# Aroon
 		aroon = AroonIndicator(self.df['Close'])
 		self.df['aroon_indicator'] = aroon.aroon_indicator()
-		
-
-	# ========================== funzioni statistiche ========================== #
-	def plot3DGraph(self, nome, vec, show=False):
-		X = linspace(1, self.periodiB-1, self.periodiB-1)
-		Y = linspace(1, self.periodiL-1, self.periodiL-1)
-		X, Y = meshgrid(X, Y)
-		Z = array([[vec[b][l] for b in range(1,self.periodiB)] for l in range(1,self.periodiL)])
-
-		# Data for a three-dimensional line
-		plt.figure().clear()
-		ax = plt.axes(projection='3d')
-		if True:
-			ax.plot_surface(X, Y, Z, rstride=1, cstride=1,
-							cmap='viridis', edgecolor='none')
-		else:
-			ax.scatter(X, Y, Z, c=Z, cmap='viridis', linewidth=0.5);
-		ax.set_title(nome)
-		ax.set_xlabel('Breve')
-		ax.set_ylabel('Lunga')
-		if show:
-			plt.show()
-		else:
-			plt.savefig(f"Img/{self.name}-{nome}.png")
-		
-	def findBest(self):
-		best = -1
-		bestb = -1
-		bestl = -1
-		for b in range(1,self.periodiB):
-			for l in range(1,self.periodiL):
-				if best < self.accuracy[b][l]:
-					best = self.accuracy[b][l]
-					bestb = b
-					bestl = l
-		return [bestb,bestl]
-
-	def plotPrice(self, show=False):
-		fig = plt.figure()
-		gs = fig.add_gridspec(2, hspace=0, height_ratios=[3,1])
-		axs = gs.subplots(sharex=True, sharey=False)
-		axs[0].plot(self.df.index,self.df['Close'],'c',markersize=2)
-		axs[0].plot(self.df.index,self.df.EMA20,'g',markersize=2)
-		axs[0].plot(self.df.index,self.df.EMA70,'r',markersize=2)
-		axs[1].plot(self.df.index,self.df.adx,'c',markersize=2)
-		axs[0].label_outer()
-		axs[1].label_outer()
-		#plt.savefig(f"Img/{self.name}-{Breve}{Lunga}.png")
-		plt.show()
-
-	def printStatistics(self, s):
-		b,l = s
-		print(self.name,"-",b,l)
-		print(f"Accuratezza: {self.accuracy[b][l]}")
-		print(f"Corretti: {self.corretto[b][l]}")
-		print(f"Sbagliati: {self.sbagliato[b][l]}")
-		print(f"Guadagno Percentuale Medio: {self.guadagnoPercentualeMedio[b][l]}")
-		print(f"Guadagno Percentuale: {self.guadagnoPercentuale[b][l]}")
-
-	def drawStatistics(self, show=False):
-		self.plot3DGraph("Accuratezza",self.accuracy,show)
-		self.plot3DGraph("Guadagno",self.guadagnoPercentuale,show)

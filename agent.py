@@ -3,7 +3,6 @@ from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
 from algorithmETH import AlgorithmETH
-from algorithmDOGE import AlgorithmDOGE
 
 class AGENT:
 	def __init__(self):

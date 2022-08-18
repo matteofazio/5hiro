@@ -100,6 +100,8 @@ async def on_message(message):
 			global SESSION
 			SESSION = False
 			await client.close()
+		elif message.content=="version" or message.content=="v":
+			await message.channel.send(f"2.0")
 		elif message.content=="help" or message.content=="h":
 			await message.channel.send(f"help-h\nshutdown-s\nbalance-b\nstate-c\nset[incl,adx,emaB,emaL]\nforce buy\nforce sell")
 		elif message.content=="balance" or message.content=="b":

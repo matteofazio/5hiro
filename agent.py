@@ -7,8 +7,8 @@ from algorithmETH import AlgorithmETH
 class AGENT:
 	def __init__(self):
 		# parametri
-		self.tassa = 0.001
-		self.moltiplicatore = 5
+		self.tassa = 0.0022
+		self.moltiplicatore = 10
 		self.stocks = 0
 		self.invest = 1 # 100%
 
@@ -42,7 +42,7 @@ class AGENT:
 			self.spesa = min(self.invest*self.money, self.money)
 			self.money -= self.spesa
 			prestito = (self.moltiplicatore-1)*self.spesa
-			self.stocks += (1-self.tassa)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
+			self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
 			self.prestito += prestito
 			self.entrata = self.A[self.current].df['Close'][-1]
 			self.dentro = True
@@ -54,7 +54,7 @@ class AGENT:
 			self.spesa = min(self.invest*self.money, self.money)
 			self.money -= self.spesa
 			prestito = (self.moltiplicatore-1)*self.spesa
-			self.stocks += (1-self.tassa)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
+			self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
 			self.prestito += prestito
 			self.entrata = self.A[self.current].df['Close'][-1]
 			self.dentro = True
@@ -68,7 +68,7 @@ class AGENT:
 		self.A[0].analyzeDf()
 		if (self.dentro and self.A[self.current].check_sell(-1, self.entrata) == True) or forced:
 			self.dentro = False
-			self.money += round(self.stocks*self.A[self.current].df['Close'][-1]-self.prestito,2)
+			self.money += round((1-self.tassa/2)*self.stocks*self.A[self.current].df['Close'][-1]-self.prestito*(1-self.tassa/2),2)
 			self.prestito = 0
 			self.stocks = 0
 			self.transactionTime.append(now)

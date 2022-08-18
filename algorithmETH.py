@@ -14,16 +14,17 @@ class AlgorithmETH:
 
 		# stop calls
 		self.stopWinMACD = self.tassa+0.4/self.moltiplicatore
-		self.stopLossMACD = (0.03)/self.moltiplicatore
+		self.stopLossMACD = (0.01)/self.moltiplicatore
 		self.stopWinBollinger = self.tassa+0.4/self.moltiplicatore
-		self.stopLossBollinger = (0.07)/self.moltiplicatore
+		self.stopLossBollinger = (0.03)/self.moltiplicatore
+		self.lifespan = 0
 
 		# parametri periodi
 		self.ADXperiodo = 14
 		self.periodiB = 6
 		self.periodiL = 66
 		self.Inclinazione = 23
-		self.Periodo = 35
+		self.Periodo = 25
 		self.longPeriod = 3*self.Periodo
 
 		self.Breve = self.periodiB
@@ -33,26 +34,29 @@ class AlgorithmETH:
 
 
 	# ========================= funzioni dell'algoritmo ========================= #
-	def check_buy(self, t):
-		#emacd = self.df['signal'][t]>self.df['macd'][t]
-		#inclinazioneMACD = 35<self.df[f'inclinazione_perc{self.Periodo}'][t]<60 and 10<self.df[f'inclinazione_perc{self.longPeriod}'][t]<45
-		inclinazioneBollinger = -10<self.df[f'inclinazione_perc{self.longPeriod}'][t] or True
+	def buy(self, t):
+		macd = self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]
+		inclinazioneMACD = 15<self.df[f'inclinazione_perc{self.Periodo}'][t]<60 and 10<self.df[f'inclinazione_perc{self.longPeriod}'][t]<45
+		
 		sar = self.df['psar_di'][t]==False
 		aroon = self.df['aroon_indicator'][t]>-70
-		if self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]:
-			sar = self.df['psar_di'][t]==False
-			adxMACD = self.df['adx'][t]>20
-			#emacd = self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]
-			if sar:
+		inclinazioneBollinger = -15<self.df[f'inclinazione_perc{self.Periodo}'][t]
+		bollinger = self.df['bollinger_pband'][t]<0.2
+		if bollinger: self.lifespan = 8
+		self.lifespan -= 1
+		
+		if macd and inclinazioneMACD and False:
+			adx = self.df['adx'][t]>35
+			if sar and adx:
 				self.strategia = "MACD"
 		elif inclinazioneBollinger and sar and aroon:
-			bollinger = self.df['bollinger_pband'][t]<0.2
-			adx = self.df['adx'][t]>25
-			if bollinger and adx:
+			adx = self.df['adx'][t]>20
+			if self.lifespan>0 and adx:
 				self.strategia = "BOLLINGER"
+			self.lifespan = 0
 		return self.strategia != "-"
 
-	def check_sell(self, t, entrata):
+	def sell(self, t, entrata):
 		if self.strategia == "MACD":
 			if self.df[f'EMA{self.Breve}'][t]<self.df[f'EMA{self.Lunga}'][t] or self.stopCallMacd(t,entrata):
 				self.strategia = "-"
@@ -62,15 +66,15 @@ class AlgorithmETH:
 		return self.strategia == "-"
 
 	def stopCallMacd(self, t, entrata):
-		sar = self.moltiplicatore*(self.df['Adj Close'][t]*(1-self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
-		upper = self.df['Adj Close'][t]>entrata*(1+self.stopWinMACD)#*(1+self.df['atr_perc'][t]))
-		lower = self.df['Adj Close'][t]<entrata*(1-self.stopLossMACD)#*(1+self.df['atr_perc'][t]))
+		sar = self.moltiplicatore*(self.df['Close'][t]*(1-self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
+		upper = self.df['Close'][t]>entrata*(1+self.stopWinMACD)#*(1+self.df['atr_perc'][t]))
+		lower = self.df['Close'][t]<entrata*(1-self.stopLossMACD)#*(1+self.df['atr_perc'][t]))
 		return upper or lower or sar
 
 	def stopCallBollinger(self, t, entrata):
-		sar = self.moltiplicatore*(self.df['Adj Close'][t]*(1-2*self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
-		upper = self.df['Adj Close'][t]>entrata*(1+self.stopWinBollinger)#*(1+self.df['atr_perc'][t]))
-		lower = self.df['Adj Close'][t]<entrata*(1-self.stopLossBollinger)#*(1+self.df['atr_perc'][t]))
+		sar = self.moltiplicatore*(self.df['Close'][t]*(1-self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
+		upper = self.df['Close'][t]>entrata*(1+self.stopWinBollinger)#*(1+self.df['atr_perc'][t]))
+		lower = self.df['Close'][t]<entrata*(1-self.stopLossBollinger)#*(1+self.df['atr_perc'][t]))
 		return upper or lower or sar
 
 	def analyzeDf(self):

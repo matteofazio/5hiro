@@ -7,8 +7,8 @@ from algorithmETH import AlgorithmETH
 class AGENT:
 	def __init__(self):
 		# parametri
-		self.tassa = 0.0022
-		self.moltiplicatore = 10
+		self.tassa = 0.0054
+		self.moltiplicatore = 5
 		self.stocks = 0
 		self.invest = 1 # 100%
 

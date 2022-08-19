@@ -14,9 +14,9 @@ class AlgorithmETH:
 
 		# stop calls
 		self.stopWinMACD = self.tassa+0.4/self.moltiplicatore
-		self.stopLossMACD = (0.07)/self.moltiplicatore
+		self.stopLossMACD = (0.02)/self.moltiplicatore
 		self.stopWinBollinger = self.tassa+0.4/self.moltiplicatore
-		self.stopLossBollinger = (0.03)/self.moltiplicatore
+		self.stopLossBollinger = (0.01)/self.moltiplicatore
 		self.lifespan = 0
 
 		# parametri periodi
@@ -36,24 +36,26 @@ class AlgorithmETH:
 	# ========================= funzioni dell'algoritmo ========================= #
 	def buy(self, t):
 		macd = self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]
-		rocMACD = self.df['rocM'][t]>-0.5
-		#inclinazioneMACD = 15<self.df[f'inclinazione_perc{self.Periodo}'][t]<60 and 10<self.df[f'inclinazione_perc{self.longPeriod}'][t]<45
-		
-		sar = self.df['psar_di'][t]==False
-		aroon = self.df['aroon_indicator'][t]>-75
-		rocB = self.df['rocB'][t]>1
+		rocMACD = self.df['rocM'][t]>0.4
+		aroonMACD = self.df['aroon_indicator'][t]>50
+		sarM = self.df['psar_di'][t]==False
+
+		aroonB = self.df['aroon_indicator'][t]>-70 or True
+		sarB = self.df['psar_di'][t]==False or True
+		rocBreve = 0.6<self.df['rocBreve'][t] or True
+		rocLungo = -0.5<self.df['rocLungo'][t]<1 or True
 		bollinger = self.df['bollinger_pband'][t]<0.2
-		if bollinger: self.lifespan = 8
+		if bollinger: self.lifespan = 3
 		self.lifespan -= 1
 		
-		if macd and rocMACD:
-			adx = self.df['adx'][t]>35
-			if sar and adx:
+		if macd and rocMACD and aroonMACD:
+			adx = self.df['adx'][t]>40
+			if sarM and adx:
 				self.strategia = "MACD"
-		elif rocB and sar and aroon and False:
+		elif rocBreve and rocLungo and sarB and aroonB and False:
 			adx = self.df['adx'][t]>20 or True
 			rsi = self.df['rsi'][t]>15 or True
-			wr = self.df['wil_r'][t]>-60 or True
+			wr = self.df['wil_r'][t]>-70 or True
 			if self.lifespan>0 and adx and rsi and wr:
 				self.strategia = "BOLLINGER"
 			self.lifespan = 0

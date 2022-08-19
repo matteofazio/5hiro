@@ -14,7 +14,7 @@ class AlgorithmETH:
 
 		# stop calls
 		self.stopWinMACD = self.tassa+0.4/self.moltiplicatore
-		self.stopLossMACD = (0.01)/self.moltiplicatore
+		self.stopLossMACD = (0.07)/self.moltiplicatore
 		self.stopWinBollinger = self.tassa+0.4/self.moltiplicatore
 		self.stopLossBollinger = (0.03)/self.moltiplicatore
 		self.lifespan = 0
@@ -36,22 +36,25 @@ class AlgorithmETH:
 	# ========================= funzioni dell'algoritmo ========================= #
 	def buy(self, t):
 		macd = self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]
-		inclinazioneMACD = 15<self.df[f'inclinazione_perc{self.Periodo}'][t]<60 and 10<self.df[f'inclinazione_perc{self.longPeriod}'][t]<45
+		rocMACD = self.df['rocM'][t]>-0.5
+		#inclinazioneMACD = 15<self.df[f'inclinazione_perc{self.Periodo}'][t]<60 and 10<self.df[f'inclinazione_perc{self.longPeriod}'][t]<45
 		
 		sar = self.df['psar_di'][t]==False
-		aroon = self.df['aroon_indicator'][t]>-70
-		inclinazioneBollinger = -15<self.df[f'inclinazione_perc{self.Periodo}'][t]
+		aroon = self.df['aroon_indicator'][t]>-75
+		rocB = self.df['rocB'][t]>1
 		bollinger = self.df['bollinger_pband'][t]<0.2
 		if bollinger: self.lifespan = 8
 		self.lifespan -= 1
 		
-		if macd and inclinazioneMACD and False:
+		if macd and rocMACD:
 			adx = self.df['adx'][t]>35
 			if sar and adx:
 				self.strategia = "MACD"
-		elif inclinazioneBollinger and sar and aroon:
-			adx = self.df['adx'][t]>20
-			if self.lifespan>0 and adx:
+		elif rocB and sar and aroon and False:
+			adx = self.df['adx'][t]>20 or True
+			rsi = self.df['rsi'][t]>15 or True
+			wr = self.df['wil_r'][t]>-60 or True
+			if self.lifespan>0 and adx and rsi and wr:
 				self.strategia = "BOLLINGER"
 			self.lifespan = 0
 		return self.strategia != "-"
@@ -94,6 +97,12 @@ class AlgorithmETH:
 		# RSI
 		rsiI = RSIIndicator(self.df['Close'])
 		self.df['rsi'] = rsiI.rsi()
+		
+		# roc
+		rocM = ROCIndicator(self.df['Close'])
+		self.df['rocM'] = rocM.roc()
+		rocB = ROCIndicator(self.df['Close'],5)
+		self.df['rocB'] = rocB.roc()
 
 		# ATR
 		atr = AverageTrueRange(self.df['High'],self.df['Low'],self.df['Close'])
@@ -107,11 +116,6 @@ class AlgorithmETH:
 		self.df['bollinger_wband'] = bollinger.bollinger_wband()
 		self.df['bollinger_hband_indicator'] = bollinger.bollinger_hband_indicator()
 		self.df['bollinger_pband'] = bollinger.bollinger_pband()
-
-		# inclinazione_perc
-		zoom = 2000
-		self.df[f'inclinazione_perc{self.Periodo}'] = zoom*200*arctan(  (self.df[f'EMA{self.periodiL}']-self.df[f'EMA{self.periodiL}'].shift(self.Periodo))/(self.Periodo*self.df[f'EMA{self.periodiL}'].shift(self.Periodo))  )/(3.14)
-		self.df[f'inclinazione_perc{self.longPeriod}'] = zoom*200*arctan(  (self.df[f'EMA{self.periodiL}']-self.df[f'EMA{self.periodiL}'].shift(self.longPeriod))/(self.longPeriod*self.df[f'EMA{self.periodiL}'].shift(self.longPeriod))  )/(3.14)
 
 		# Parabolic SAR
 		parabolicSar = PSARIndicator(self.df['High'],self.df['Low'],self.df['Close'])

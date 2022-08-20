@@ -101,7 +101,7 @@ async def on_message(message):
 			SESSION = False
 			await client.close()
 		elif message.content=="version" or message.content=="v":
-			await message.channel.send(f"2.2")
+			await message.channel.send(f"2.3")
 		elif message.content=="help" or message.content=="h":
 			await message.channel.send(f"help-h\nshutdown-s\nbalance-b\nstate-c\nset[incl,adx,emaB,emaL]\nforce buy\nforce sell")
 		elif message.content=="balance" or message.content=="b":
@@ -112,13 +112,13 @@ async def on_message(message):
 		elif message.content.split(" ")[0]=="set":
 			Agent.set(message.content.split(" ")[1:])
 			await message.channel.send(Agent.show_settings())
-		elif message.content=="force buy 0":
-			if len(message.content.split(" "))!=3:
-				await client.get_channel(azioniCH).send(f"Specificare quale comprare[0,1]: {Agent.currentName}")
-			else:
+		elif "force buy 0" in message.content:
+			if len(message.content.split(" "))==3:
 				flag, r = Agent.buy(datetime.fromtimestamp(time()).strftime("%H:%M:%S"),get_data(Agent.currentName),True,int(message.content.split(" ")[2]))
-				if flag:
-					await client.get_channel(transazioniCH).send(r)
+			elif len(message.content.split(" "))==4 and message.content.split(" ")[3]=="short":
+				flag, r = Agent.buy(datetime.fromtimestamp(time()).strftime("%H:%M:%S"),get_data(Agent.currentName),True,int(message.content.split(" ")[2]),True)			
+			if flag:
+				await client.get_channel(transazioniCH).send(r)
 		elif message.content=="force sell":
 			flag, r = Agent.sell(datetime.fromtimestamp(time()).strftime("%H:%M:%S"),get_data(Agent.currentName),True)
 			if flag:

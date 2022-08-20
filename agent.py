@@ -28,54 +28,89 @@ class AGENT:
 		self.spesa = 0
 		self.entrata = 0
 
-		self.strategia = "-"
 		self.current = -1
 		self.currentName = ["ETH"]
 		self.currentNameResult = ["XETHZ"]
 
 	# ========================= funzioni di gestione ========================= #
-	def buy(self, now, data, forced=False, which=-1):
+	def buy(self, now, data, forced=False, which=-1,shorting=False):
 		self.A[0].df = data[0].astype(float)
 		self.A[0].analyzeDf()
 		if (not self.dentro and self.A[0].check_buy(-1) == True):
-			self.current = 0
-			self.spesa = min(self.invest*self.money, self.money)
-			self.money -= self.spesa
-			prestito = (self.moltiplicatore-1)*self.spesa
-			self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
-			self.prestito += prestito
-			self.entrata = self.A[self.current].df['Close'][-1]
-			self.dentro = True
-			self.transactionTime.append(now)
-			self.moneyT.append(self.money)
-			return [True,f"Buy: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}+{self.prestito}={self.spesa+self.prestito}€) / Balance:{self.money}€"]
+			if self.A.short==False:
+				self.current = 0
+				self.spesa = min(self.invest*self.money, self.money)
+				self.money -= self.spesa
+				prestito = (self.moltiplicatore-1)*self.spesa
+				self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
+				self.prestito += prestito
+				self.entrata = self.A[self.current].df['Close'][-1]
+				self.dentro = True
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				return [True,f"Buy: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}+{self.prestito}={self.spesa+self.prestito}€) / Balance:{self.money}€"]
+			elif self.A[0].short==True:
+				self.current = 0
+				self.spesa = min(self.invest*self.money, self.money)
+				self.money += self.moltiplicatore*self.spesa*(1-self.tassa/2)
+				self.stocks -= (1-self.tassa/2)*(self.moltiplicatore*self.spesa)/self.A[self.current].df['Close'][-1]
+				self.entrata = self.A[self.current].df['Close'][-1]
+				self.dentro = True
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				return [True,f"[Short]Sell: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}*{self.moltiplicatore}={self.moltiplicatore*self.spesa}€) / Balance:{self.money}€"]	
 		elif forced:
-			self.current = which
-			self.spesa = min(self.invest*self.money, self.money)
-			self.money -= self.spesa
-			prestito = (self.moltiplicatore-1)*self.spesa
-			self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
-			self.prestito += prestito
-			self.entrata = self.A[self.current].df['Close'][-1]
-			self.dentro = True
-			self.transactionTime.append(now)
-			self.moneyT.append(self.money)
-			return [True,f"Buy: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}+{self.prestito}={self.spesa+self.prestito}€) / Balance:{self.money}€"]
+			if shorting==False:
+				self.current = which
+				self.spesa = min(self.invest*self.money, self.money)
+				self.money -= self.spesa
+				prestito = (self.moltiplicatore-1)*self.spesa
+				self.stocks += (1-self.tassa/2)*(self.spesa+prestito)/self.A[self.current].df['Close'][-1]
+				self.prestito += prestito
+				self.entrata = self.A[self.current].df['Close'][-1]
+				self.dentro = True
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				return [True,f"Buy: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}+{self.prestito}={self.spesa+self.prestito}€) / Balance:{self.money}€"]
+			else:
+				self.current = which
+				self.A[self.current].short = True
+				self.spesa = min(self.invest*self.money, self.money)
+				self.money += self.moltiplicatore*self.spesa*(1-self.tassa/2)
+				self.stocks -= (1-self.tassa/2)*(self.moltiplicatore*self.spesa)/self.A[self.current].df['Close'][-1]
+				self.entrata = self.A[self.current].df['Close'][-1]
+				self.dentro = True
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				return [True,f"[Short]Sell: Crypto:{self.stocks} {self.currentName[self.current]}({self.spesa}*{self.moltiplicatore}={self.moltiplicatore*self.spesa}€) / Balance:{self.money}€"]	
 		return [False,""]
 
 	def sell(self, now, data, forced=False):
 		self.A[0].df = data[0].astype(float)
 		self.A[0].analyzeDf()
 		if (self.dentro and self.A[self.current].check_sell(-1, self.entrata) == True) or forced:
-			self.dentro = False
-			self.money += round((1-self.tassa/2)*self.stocks*self.A[self.current].df['Close'][-1]-self.prestito*(1-self.tassa/2),2)
-			self.prestito = 0
-			self.stocks = 0
-			self.transactionTime.append(now)
-			self.moneyT.append(self.money)
-			m = self.current
-			self.current = -1
-			return [True,f"Sell: Crypto:{self.stocks} {self.currentName[m]} / Balance:{round(self.money,2)}€"]
+			if self.A[self.current].short==False:
+				self.dentro = False
+				self.money += round((1-self.tassa/2)*self.stocks*self.A[self.current].df['Close'][-1]-self.prestito*(1-self.tassa/2),2)
+				self.prestito = 0
+				self.stocks = 0
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				m = self.current
+				self.current = -1
+				return [True,f"Sell: Crypto:{self.stocks} {self.currentName[m]} / Balance:{round(self.money,2)}€"]
+			elif self.A[self.current].short==True:
+				self.dentro = False
+				#print((1+self.tassa/2),self.stocks,self.A[self.current].df['Close'][-1])
+				# calcolo delle tasse sbagliato
+				self.money += (1+self.tassa/2)*self.stocks*self.A[self.current].df['Close'][-1]
+				self.prestito = 0
+				self.stocks = 0
+				self.transactionTime.append(now)
+				self.moneyT.append(self.money)
+				m = self.current
+				self.current = -1
+				return [True,f"[Short]Buy: Crypto:{self.stocks} {self.currentName[m]} / Balance:{round(self.money,2)}€"]
 		return [False,""]
 
 

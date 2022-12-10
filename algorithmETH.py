@@ -2,146 +2,94 @@ from numpy import linspace, meshgrid, array, arctan
 from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
+from cryptography.fernet import Fernet
 import pandas as pd
+import os
+
+f = open("ai.md","rb")
+w = open("ai.py","w")
+key = os.environ['FERNET']
+fernet = Fernet(key)
+text = fernet.decrypt(f.read()).decode("utf-8")
+w.write(text)
+w.close()
+f.close()
+
+from ai import AI
 
 class AlgorithmETH:
 	def __init__(self, tassa, moltiplicatore):
 		self.df = -1
+		self.ai = AI()
 
 		# parametri
 		self.tassa = tassa
 		self.moltiplicatore = moltiplicatore
 
 		# stop calls
-		self.stopWinMACD = self.tassa+0.4/self.moltiplicatore
-		self.stopLossMACD = (0.04)/self.moltiplicatore
-		self.stopWinMACDs = self.tassa+0.4/self.moltiplicatore
-		self.stopLossMACDs = (0.02)/self.moltiplicatore
-		self.stopWinBollinger = self.tassa+0.4/self.moltiplicatore
-		self.stopLossBollinger = (0.01)/self.moltiplicatore
-		self.lifespan = 0
-
-		# parametri periodi
-		self.ADXperiodo = 14
-		self.periodiB = 6
-		self.periodiL = 66
-		self.Inclinazione = 23
-		self.Periodo = 25
-		self.longPeriod = 3*self.Periodo
-
-		self.Breve = self.periodiB
-		self.Lunga = self.periodiL
+		self.stopWin = 0
+		self.stopLoss = 0
 
 		self.strategia = "-"
-		self.short = False
 
 
 	# ========================= funzioni dell'algoritmo ========================= #
-	def check_buy(self, t):
-		macd = self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t]
-		rocMACD = self.df['rocM'][t]>0.4
-		aroonMACD = self.df['aroon_indicator'][t]>50
-		sarM = self.df['psar_di'][t]==False
-		
-		Smacd = self.df[f'EMA{self.Breve}'][t]<self.df[f'EMA{self.Lunga}'][t]
-		SrocMACD = -2<self.df['rocM'][t]<0.3 and self.df['rocLungo'][t]<-0.5 and -2<self.df['rocBreve'][t]<-0.3
-		SaroonMACD = self.df['aroon_indicator'][t]<-40
-		Sbollinger = self.df['bollinger_pband'][t-10]-self.df['bollinger_pband'][t]<0.1 and self.df['bollinger_pband'][t]>0.3
-		SsarM = self.df['psar_di'][t]==True
-		
-		if macd and rocMACD and aroonMACD:
-			adx = self.df['adx'][t]>40
-			if sarM and adx:
-				self.strategia = "MACD"
-		elif Smacd and SrocMACD and SaroonMACD and Sbollinger:
-			adx = self.df['adx'][t]>20
-			if SsarM and adx:
-				self.short = True
-				self.strategia = "MACDshort"
+	def check_enter(self, t):
+		self.strategia,calls = self.ai.eval(self.df,t)
+		if self.strategia != "-":
+			self.stopWin = calls[0]
+			self.stopLoss = calls[1]
 		return self.strategia != "-"
 
-	def check_sell(self, t, entrata):
-		if self.strategia == "MACD":
-			if self.df[f'EMA{self.Breve}'][t]<self.df[f'EMA{self.Lunga}'][t] or self.stopCallMacd(t,entrata):
-				self.strategia = "-"
-		elif self.strategia == "MACDshort":
-			if self.df[f'EMA{self.Breve}'][t]>self.df[f'EMA{self.Lunga}'][t] or self.stopCallMacdshort(t,entrata):
-				self.strategia = "-"
-		elif self.strategia == "BOLLINGER":
-			if self.stopCallBollinger(t,entrata):
-				self.strategia = "-"
+	def check_exit(self, t, entrata):
+		# this is actually something not necessary, since
+		# stopCalls will be automated. But is good to have
+		# to both add security, and also for a possible
+		# future generalization
+		if self.strategia != "-":
+			if "short" in self.strategia:
+				if self.stopCallShort():
+					self.strategia = "-"
+			elif "short" not in self.strategia:
+				if self.stopCallLong():
+					self.strategia = "-"
 		return self.strategia == "-"
 
-	def stopCallMacd(self, t, entrata):
-		sar = self.moltiplicatore*(self.df['Close'][t]*(1-self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
-		upper = self.df['Close'][t]>entrata*(1+self.stopWinMACD)#*(1+self.df['atr_perc'][t]))
-		lower = self.df['Close'][t]<entrata*(1-self.stopLossMACD)#*(1+self.df['atr_perc'][t]))
-		return upper or lower or sar
+	def stopCallLong(self, t, entrata):
+		upper = self.df['Close'][t]>entrata*(1+self.stopWin)
+		lower = self.df['Close'][t]<entrata*(1-self.stopLoss)
+		return upper or lower
 
-	def stopCallMacdshort(self, t, entrata):
-		sar = self.moltiplicatore*(self.df['Close'][t]*(1+self.tassa/2)-entrata*(1-self.tassa/2))/entrata<=0 and self.df['psar_di'][t]==False
-		lower = self.df['Close'][t]<entrata*(1-self.stopWinMACDs)#*(1+self.df['atr_perc'][t]))
-		upper = self.df['Close'][t]>entrata*(1+self.stopLossMACDs)#*(1+self.df['atr_perc'][t]))
-		return upper or lower or sar
-
-	def stopCallBollinger(self, t, entrata):
-		sar = self.moltiplicatore*(self.df['Close'][t]*(1-self.tassa)-entrata)/entrata>=0 and self.df['psar_di'][t]==True
-		upper = self.df['Close'][t]>entrata*(1+self.stopWinBollinger)#*(1+self.df['atr_perc'][t]))
-		lower = self.df['Close'][t]<entrata*(1-self.stopLossBollinger)#*(1+self.df['atr_perc'][t]))
-		return upper or lower or sar
-
+	def stopCallLong(self, t, entrata):
+		upper = self.df['Close'][t]<entrata*(1-self.stopWin)
+		lower = self.df['Close'][t]>entrata*(1+self.stopLoss)
+		return upper or lower
 
 	def analyzeDf(self):
 		# EMA
-		self.df[f'EMA{self.periodiB}'] = ema_indicator(self.df['Close'], self.periodiB, False)
-		self.df[f'EMA{self.periodiL}'] = ema_indicator(self.df['Close'], self.periodiL, False)
-		macd = MACD(self.df['Close'])
-		self.df['macd'] = macd.macd()
-		self.df['signal'] = macd.macd_signal()
-
-		# ADX
-		adxI = ADXIndicator(self.df['High'],self.df['Low'],self.df['Close'], self.ADXperiodo, False)
-		self.df['pos_directional_indicator'] = adxI.adx_pos()
-		self.df['neg_directional_indicator'] = adxI.adx_neg()
-		self.df['adx'] = adxI.adx()
-
-		# RSI
-		rsiI = RSIIndicator(self.df['Close'])
-		self.df['rsi'] = rsiI.rsi()
+		self.df[f'EMA{100}'] = ema_indicator(self.df['Close'],100,False)
+		rocEMA100 = ROCIndicator(self.df['EMA100'])
+		self.df['rocEMA100'] = rocEMA100.roc() #
 		
-		# roc
-		rocM = ROCIndicator(self.df['Close'])
-		self.df['rocM'] = rocM.roc()
-		rocB = ROCIndicator(self.df['Close'],5)
-		self.df['rocB'] = rocB.roc()
+		self.df['distance'] = (self.df['Close']-self.df['EMA100'])/self.df['EMA100'] #
+		macd = MACD(self.df['Close'])
+		self.df['macd_diff'] = macd.macd_diff() #
 
-		# ATR
-		atr = AverageTrueRange(self.df['High'],self.df['Low'],self.df['Close'])
-		self.df['atr'] = atr.average_true_range()
-		self.df['atr_perc'] = self.df['atr']/self.df['Close']
+		# roc
+		rocBreve = ROCIndicator(self.df['Close'])
+		self.df['rocM'] = rocBreve.roc()
+		rocBreve = ROCIndicator(self.df['Close'],5)
+		self.df['roc5'] = rocBreve.roc()
 
 		# Bollinger Bands
-		bollinger = BollingerBands(self.df['Close'],200)
-		self.df['bollinger_hband'] = bollinger.bollinger_hband()
-		self.df['bollinger_lband'] = bollinger.bollinger_lband()
-		self.df['bollinger_wband'] = bollinger.bollinger_wband()
-		self.df['bollinger_hband_indicator'] = bollinger.bollinger_hband_indicator()
-		self.df['bollinger_pband'] = bollinger.bollinger_pband()
+		bollinger = BollingerBands(self.df['Close'],100)
+		self.df['bollinger_wband'] = bollinger.bollinger_wband() #
+		self.df['bollinger_pband'] = bollinger.bollinger_pband() #
 
-		# roc
-		rocM = ROCIndicator(self.df['Close'])
-		self.df['rocM'] = rocM.roc()
-		rocBreve = ROCIndicator(self.df['Close'],2)
-		self.df['rocBreve'] = rocBreve.roc()
-		rocLungo = ROCIndicator(self.df['Close'],95)
-		self.df['rocLungo'] = rocLungo.roc()
-
-		# Parabolic SAR
-		parabolicSar = PSARIndicator(self.df['High'],self.df['Low'],self.df['Close'])
-		self.df['psar'] = parabolicSar.psar()
-		self.df['psar_di'] = self.df['psar']>self.df['Close']
-		self.df['psar_down_indicator'] = parabolicSar.psar_down_indicator()
-
-		# Aroon
-		aroon = AroonIndicator(self.df['Close'])
-		self.df['aroon_indicator'] = aroon.aroon_indicator()
+	def get_current_state(self):
+		r = f"Close: {self.df.iloc[-1]['Close']} | "
+		r += f"macd_diff: {self.df.iloc[-1]['macd_diff']} | "
+		r += f"rocEMA100: {self.df.iloc[-1]['rocEMA100']} | "
+		r += f"bollinger_pband: {self.df.iloc[-1]['bollinger_pband']} | "
+		r += f"bollinger_wband: {self.df.iloc[-1]['bollinger_wband']}"
+		return r

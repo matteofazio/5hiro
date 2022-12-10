@@ -1,4 +1,6 @@
 asyncio
+binance-connector
+cryptography
 discord.py==1.7.3
 numpy
 pandas

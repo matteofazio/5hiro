@@ -2,18 +2,8 @@ from numpy import linspace, meshgrid, array, arctan
 from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
-from cryptography.fernet import Fernet
 import pandas as pd
 import os
-
-f = open("ai.md","rb")
-w = open("ai.py","w")
-key = os.environ['FERNET']
-fernet = Fernet(key)
-text = fernet.decrypt(f.read()).decode("utf-8")
-w.write(text)
-w.close()
-f.close()
 
 from ai import AI
 

@@ -129,7 +129,7 @@ async def on_message(message):
 			await message.channel.send(f"help-h\nversion-v\nshutdown/execute-s\nbalance-b\nstate-c\nforce buy 0\nforce sell\nbook\nenter/exit e")
 		# Version command
 		elif message.content=="version" or message.content=="v":
-			await message.channel.send(f"B1.2.0")
+			await message.channel.send(f"B2.0.0")
 		# Modify state, enter->exit, or exit->enter
 		elif message.content=="enter" or message.content=="exit" or message.content=="e":
 			Agent.dentro = not Agent.dentro

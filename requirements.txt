@@ -4,6 +4,9 @@ cryptography
 discord.py==1.7.3
 numpy
 pandas
+pandas-ta
 requests
+sklearn-pandas==1.8.0
 ta==0.10.1
+xgboost==1.6.2
 yfinance==0.1.74

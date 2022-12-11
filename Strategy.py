@@ -4,6 +4,7 @@ from yfinance import download
 from datetime import datetime, timedelta
 from xgboost import XGBClassifier
 from cryptography.fernet import Fernet
+import os
 
 class Strategy:
 	def __init__(self, exchange):

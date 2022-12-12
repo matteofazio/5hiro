@@ -16,6 +16,7 @@ class Agent:
 		self.shorting = False
 
 	def buy(self, forced=False, short=False):
+		return [False,""]
 		self.strategy, sl, tp = self.Strategy.checkEnter()
 		if not self.dentro and self.strategy != "-":
 			self.ora = int((time()-60)*1000)
@@ -85,6 +86,7 @@ class Agent:
 			return self.buy()
 		else:
 			return self.Strategy.actOnOpenPosition()
+		return [False,""] # This should not be executed
 
 	def get_total_balance(self):
 		"""self.Trader.get_balance()

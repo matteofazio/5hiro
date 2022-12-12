@@ -37,7 +37,7 @@ class Bot:
 		#data = get_data(Agent.currentName)
 		#info0 = data.iloc[-1]
 		#await self.client.get_channel(datiCH).send(f"[{Agent.exchange}] {info0.name}| Open:{info0['Open']}/Low:{info0['Low']}/High:{info0['High']}/Close:{info0['Close']}")
-		print(self.Agent.actOnPosition())
+		print(">>>",self.Agent.actOnPosition())
 		flag, r = self.Agent.actOnPosition()
 		print(self.Agent.dentro)
 		if flag:

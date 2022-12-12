@@ -17,7 +17,7 @@ class Clock:
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60
 			secondsToSleep += 20-self.now[2]  # 20 seconds after the 1 hour
-
+		print(secondsToSleep)
 		sleep(secondsToSleep)
 		self.now = datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")
 

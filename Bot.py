@@ -40,7 +40,7 @@ class Bot:
 		print(">>>",self.Agent.actOnPosition())
 		flag, r = self.Agent.actOnPosition()
 		print(self.Agent.dentro)
-		if flag:
+		if flag and False:
 			# Transaction message
 			await self.client.get_channel(self.room['transazioniCH']).send(r)
 			# Action message

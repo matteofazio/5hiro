@@ -4,6 +4,8 @@
 import traceback
 import os
 import Bot as BotLib
+from webserver import keep_alive
+
 
 bot = BotLib.Bot()
 
@@ -92,4 +94,8 @@ async def on_message(message):
 			if flag:
 				await bot.client.get_channel(transazioniCH).send(r)
 
+
+#Bottom of Main.py
+
+keep_alive()
 bot.client.run(os.environ['DISCORD_TOKEN'])

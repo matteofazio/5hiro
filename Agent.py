@@ -16,7 +16,7 @@ class Agent:
 		self.shorting = False
 
 	def buy(self, forced=False, short=False):
-		return [False,""]
+		#return [False,""]
 		self.strategy, sl, tp = self.Strategy.checkEnter()
 		if not self.dentro and self.strategy != "-":
 			self.ora = int((time()-60)*1000)

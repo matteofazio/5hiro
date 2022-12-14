@@ -48,7 +48,7 @@ class Bot:
 			await self.client.get_channel(self.room['transazioniCH']).send(f"[{self.name}] "+r)
 			# Action message
 			allowed_mentions = discord.AllowedMentions(everyone = True)
-			await self.client.get_channel(self.room['azioniCH']).send(content=f"[{sefl.name}] @everyone Stock transaction happened.", allowed_mentions=allowed_mentions)
+			await self.client.get_channel(self.room['azioniCH']).send(content=f"[{self.name}] @everyone Stock transaction happened.", allowed_mentions=allowed_mentions)
 			#r = self.Agent.get_current_state(data)
 			#await self.client.get_channel(self.room['azioniCH']).send(r)
 		

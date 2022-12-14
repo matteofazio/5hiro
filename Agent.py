@@ -43,7 +43,7 @@ class Agent:
 		time.sleep(30)
 		self.Trader.get_balance()"""
 		# sostituire con una call per vedere gli ordini aperti
-		return [True,f"{strategy}"] # da cambiare in self.strategy
+		return [True,f"{strategy} (Close:{self.Strategy.df.Close.iloc[-1]}), sl:{self.Strategy.df.Close.iloc[-1]*0.98}, tp:{self.Strategy.df.Close.iloc[-1]*(1+0.02*1.5)}"] # da cambiare in self.strategy
 
 	def check_buy(self, forced=False, forced_short=False):
 		self.strategy, sl, tp = self.Strategy.checkEnter()

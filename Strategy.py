@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from xgboost import XGBClassifier
 from cryptography.fernet import Fernet
 import os
+from random import random
 
 class Strategy:
 	def __init__(self, exchange):
@@ -15,7 +16,6 @@ class Strategy:
 
 		self.loadModel()
 
-		self.strategy = "-"
 		# parametri
 		# self.tassa = 0.01
 		# self.moltiplicatore = 1
@@ -36,10 +36,12 @@ class Strategy:
 		self.updateData()
 		prediction = int(self.model.predict(self.df.iloc[-1:]))
 		if prediction == 1:
-			self.strategy = "long"
+			strategy = "long5min"
+		elif random()<0.1:
+			strategy = "random"
 		sl = 0
 		tp = 0
-		return self.strategy, sl, tp
+		return strategy, sl, tp
 
 	def actOnOpenPosition(self):
 		return [False,""] # trail stop to be implemented

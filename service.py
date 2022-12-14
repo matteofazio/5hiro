@@ -45,6 +45,7 @@ async def on_message(message):
 		return
 
 	# da rendere migliore
+	await message.channel.send(f"Received: {message.content}")
 	return
 	# dividere comandi tell and do <--
 

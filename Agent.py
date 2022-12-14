@@ -15,60 +15,42 @@ class Agent:
 		self.ora = 0
 		self.shorting = False
 
-	def buy(self, forced=False, short=False):
-		return [False,""]
+	def buy(self, short=False):
+		self.ora = int((time()-60)*1000)
+		self.Trader.get_balance()
+		spesa = self.Strategy.invest*self.Trader.money
+		self.strategy = "-" # Da togliere
+		# self.dentro = True e' commentato, prendo tutti i segnali
+		"""if  and False: # <- to activate
+			self.shorting = True
+
+		r = 0#self.Trader.enterOrder(fraction=self.Strategy.invest,sl=sl,tp=tp)
+
+		#if self.Trader.openOrder()
+		k = 0
+		while k<8:
+			sleep(10)
+			flag,costo,tassa,price,volume = self.get_trade_history(self.ora)
+			print(flag,costo,tassa,price)
+			if flag:
+				self.entrata = price
+				break
+			k += 1
+		if costo!=0:
+			self.dentro = True
+		
+		time.sleep(30)
+		self.Trader.get_balance()"""
+		# sostituire con una call per vedere gli ordini aperti
+		return [True,f"{self.strategy}"]
+
+	def check_buy(self, forced=False, forced_short=False):
 		self.strategy, sl, tp = self.Strategy.checkEnter()
-		if not self.dentro and self.strategy != "-":
-			self.ora = int((time()-60)*1000)
-			self.Trader.get_balance()
-			spesa = self.Strategy.invest*self.money
-			if "short" in self.strategy and False: # <- to activate
-				self.shorting = True
-
-			r = 0#self.Trader.enterOrder(fraction=self.Strategy.invest,sl=sl,tp=tp)
-
-			#if self.Trader.openOrder()
-			k = 0
-			while k<8:
-				sleep(10)
-				flag,costo,tassa,price,volume = self.get_trade_history(self.ora)
-				print(flag,costo,tassa,price)
-				if flag:
-					self.entrata = price
-					break
-				k += 1
-			if costo!=0:
-				self.dentro = True
-			
-			time.sleep(30)
-			self.Trader.get_balance()
-			return [True,r]
-			#return [True,f"Enter: {self.get_price()} [{self.A.strategia}]"]
-			#return [True,f"[{self.A.strategia}] Enter: Crypto:{self.stocks} {self.currentName}({costo}*{self.moltiplicatore}={costo*self.moltiplicatore}$) / Balance:{self.money}$ || {output}"]
-		elif forced:
-			self.Trader.get_balance()
-			spesa = self.invest*self.money
-			if short==True:
-				self.shorting = True
-			output = self.enter_order()
-			r = 0
-			#if self.Trader.openOrder()
-			k = 0
-			while k<8:
-				sleep(10)
-				flag,costo,tassa,price,volume = self.get_trade_history(self.ora)
-				print(flag,costo,tassa,price)
-				if flag:
-					self.entrata = price
-					break
-				k += 1
-			if costo!=0:
-				self.dentro = True
-			
-			time.sleep(30)
-			self.Trader.get_balance()
-			return [True,r]
-			#return [True,f"[{self.A.strategia}] Enter: Crypto:{self.stocks} {self.currentName}({costo}*{self.moltiplicatore}={costo*self.moltiplicatore}$) / Balance:{self.money}$ || {output}"]
+		if not self.dentro and (self.strategy != "-" or forced):
+			if self.strategy != "-":
+				return self.buy("short" in self.strategy)
+			elif forced:
+				return self.buy(forced_short)
 		return [False,""]
 
 	# this method is invoked only as a force sell
@@ -83,12 +65,13 @@ class Agent:
 
 	def actOnPosition(self):
 		if not self.dentro:
-			return self.buy()
+			return self.check_buy()
 		else:
 			return self.Strategy.actOnOpenPosition()
 		return [False,""] # This should not be executed
 
 	def get_total_balance(self):
+		return "some number"
 		"""self.Trader.get_balance()
 		return f"Balance: {self.Trader.money}$+({self.Trader.staticMoney}$) /"+\
 				f" Crypto: {self.stocks}{self.currentName}({self.get_price()*self.stocks}$)({self.get_price()}ETH/$) /"+\

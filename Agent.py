@@ -19,6 +19,7 @@ class Agent:
 		self.ora = int((time()-60)*1000)
 		self.Trader.get_balance()
 		spesa = self.Strategy.invest*self.Trader.money
+		strategy = self.strategy
 		self.strategy = "-" # Da togliere
 		# self.dentro = True e' commentato, prendo tutti i segnali
 		"""if  and False: # <- to activate
@@ -42,7 +43,7 @@ class Agent:
 		time.sleep(30)
 		self.Trader.get_balance()"""
 		# sostituire con una call per vedere gli ordini aperti
-		return [True,f"{self.strategy}"]
+		return [True,f"{strategy}"] # da cambiare in self.strategy
 
 	def check_buy(self, forced=False, forced_short=False):
 		self.strategy, sl, tp = self.Strategy.checkEnter()

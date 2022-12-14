@@ -3,6 +3,7 @@
 
 import traceback
 import os
+import asyncio
 import Bot as BotLib
 from webserver import keep_alive
 
@@ -38,6 +39,7 @@ async def on_ready():
 		# end program
 		elif bot.SESSION=="exit":
 			break
+	await bot.client.close()
 
 
 @bot.client.event

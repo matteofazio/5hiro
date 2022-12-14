@@ -1,4 +1,5 @@
 from time import time, sleep
+import asyncio
 from datetime import datetime, timedelta
 
 class Clock:
@@ -7,7 +8,7 @@ class Clock:
 		self.interval = interval
 		self.intervalTime = 5 # minuti
 
-	def sleep(self):
+	async def sleep(self):
 		now = [int(i) for i in datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")]
 		if self.interval == 5: # 5 minutes
 			minutes = now[1]%5
@@ -17,10 +18,7 @@ class Clock:
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60
 			secondsToSleep += 20-self.now[2]  # 20 seconds after the 1 hour
-		for i in range(secondsToSleep//60):
-			print(secondsToSleep)
-			sleep(60)
-		sleep(secondsToSleep%60)
+		await asyncio.sleep(secondsToSleep)
 		self.now = datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")
 
 	def get_time_id(self):

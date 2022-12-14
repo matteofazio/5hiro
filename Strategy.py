@@ -35,6 +35,7 @@ class Strategy:
 	def checkEnter(self):
 		self.updateData()
 		prediction = int(self.model.predict(self.df.iloc[-1:]))
+		strategy = "-"
 		if prediction == 1:
 			strategy = "long5min"
 		elif random()<0.1:

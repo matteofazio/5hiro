@@ -38,6 +38,8 @@ class Strategy:
 		strategy = "-"
 		if prediction == 1:
 			strategy = "long5min"
+		elif prediction == 2:
+			strategy = "short5min"
 		elif random()<0.1:
 			strategy = "random"
 		sl = 0

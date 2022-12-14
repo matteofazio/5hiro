@@ -10,6 +10,7 @@ from random import random
 class Strategy:
 	def __init__(self, exchange):
 		self.df = -1
+		self.data = -1
 		self.exchange = exchange+"-EUR"
 		self.interval = 5 # minutes
 		self.invest = 0.99
@@ -72,6 +73,7 @@ class Strategy:
 		self.df = download(self.exchange, start=(datetime.now()-timedelta(minutes=STEP)).date(), end=datetime.now(), interval=interval, auto_adjust=False, prepost=False)
 		self.df.index.names = ["Gmt time"]
 		self.df = self.df[['Open','High','Low','Close','Volume']]
+		self.data = self.df
 
 	def updateData(self):
 		self.getRawData()

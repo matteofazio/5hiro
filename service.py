@@ -46,9 +46,10 @@ async def on_message(message):
 	if message.author == bot.client.user:
 		return
 	print(2,bot.name)
-	if message.content == "kill "+bot.name
+	if message.content == "kill "+bot.name:
+		bot.SESSION = "exit"
 	# da rendere migliore
-	await message.channel.send(f"Received: {message.content}")
+	await message.channel.send(f"[{bot.name}] Received: {message.content}")
 	return
 	# dividere comandi tell and do <--
 

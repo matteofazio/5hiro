@@ -11,6 +11,7 @@ class Bot:
 		self.client = discord.Client()
 		self.Agent = AgentLib.Agent()
 		self.Clock = ClockLib.Clock(interval=self.Agent.Strategy.interval)
+		self.name = f"{self.Clock.get_time_id()}"
 		self.SESSION = "run"
 
 		# id canali

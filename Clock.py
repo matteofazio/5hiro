@@ -23,5 +23,8 @@ class Clock:
 		sleep(secondsToSleep%60)
 		self.now = datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")
 
+	def get_time_id(self):
+		return int(time())
+
 	def time(self):
 		return ":".join(datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")[:-1])

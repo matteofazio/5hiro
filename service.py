@@ -8,6 +8,7 @@ from webserver import keep_alive
 
 
 bot = BotLib.Bot()
+print(bot.name)
 
 @bot.client.event
 async def on_ready():
@@ -41,9 +42,11 @@ async def on_ready():
 
 @bot.client.event
 async def on_message(message):
+	print(1)
 	if message.author == bot.client.user:
 		return
-
+	print(2,bot.name)
+	if message.content == "kill "+bot.name
 	# da rendere migliore
 	await message.channel.send(f"Received: {message.content}")
 	return

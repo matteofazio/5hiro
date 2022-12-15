@@ -37,9 +37,9 @@ class Strategy:
 		self.updateData()
 		prediction = int(self.model.predict(self.df.iloc[-1:]))
 		strategy = "-"
-		if prediction == 1:
+		if prediction == 2:
 			strategy = "long5min"
-		elif prediction == 2:
+		elif prediction == 1:
 			strategy = "short5min"
 		elif random()<0.1:
 			strategy = "random"

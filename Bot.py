@@ -33,7 +33,7 @@ class Bot:
 		await self.client.get_channel(self.room['azioniCH']).send(content=str(e), allowed_mentions=allowed_mentions)
 
 	async def runLoop(self):
-		await self.Clock.sleep()
+		await self.Clock.sleep(self.Agent.dentro)
 		if self.SESSION != "run":
 			return
 		await self.client.get_channel(self.room['attivitaCH']).send(f"Connection check({self.Clock.time()}).")

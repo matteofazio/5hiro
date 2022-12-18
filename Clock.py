@@ -8,13 +8,17 @@ class Clock:
 		self.interval = interval
 		self.intervalTime = 5 # minuti
 
-	async def sleep(self):
+	async def sleep(self, trailing):
 		now = [int(i) for i in datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")]
-		if self.interval == 5: # 5 minutes
+		if trailing:
+			minutes = now[1]
+			if minutes < 57:
+				secondsToSleep = 60 # update every minute the trail
+		elif self.interval == 5: # 5 minutes
 			minutes = now[1]%5
 			secondsToSleep = (5-minutes)*60
 			secondsToSleep += 20-now[2] # 20 seconds after the 5 minutes
-		if self.interval == 1:
+		elif self.interval == 1:
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60
 			secondsToSleep += 20-self.now[2]  # 20 seconds after the 1 hour

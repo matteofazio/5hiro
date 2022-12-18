@@ -12,7 +12,7 @@ class Strategy:
 		self.df = -1
 		self.data = -1
 		self.exchange = exchange+"-EUR"
-		self.interval = 5 # minutes
+		self.interval = 1 # minutes
 		self.invest = 0.99
 
 		self.loadModel()
@@ -37,9 +37,9 @@ class Strategy:
 		self.updateData()
 		prediction = int(self.model.predict(self.df.iloc[-1:]))
 		strategy = "-"
-		if prediction == 2:
+		if prediction == 1:
 			strategy = "long5min"
-		elif prediction == 1:
+		elif prediction == 2:
 			strategy = "short5min"
 		elif random()<0.1:
 			strategy = "random"

@@ -21,7 +21,7 @@ class Clock:
 		elif self.interval == 1:
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60
-			secondsToSleep += 20-self.now[2]  # 20 seconds after the 1 hour
+			secondsToSleep += 20-now[2]  # 20 seconds after the 1 hour
 		await asyncio.sleep(secondsToSleep)
 		self.now = datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")
 

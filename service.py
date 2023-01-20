@@ -8,7 +8,7 @@ import Bot as BotLib
 from webserver import keep_alive
 
 keep_alive()
-"""
+
 print("Starting program...")
 bot = BotLib.Bot()
 print(bot.name)
@@ -129,4 +129,3 @@ async def on_message(message):
 
 #Bottom of Main.py
 bot.client.run(os.environ['DISCORD_TOKEN'])
-"""

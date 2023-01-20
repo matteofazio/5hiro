@@ -33,22 +33,16 @@ class Bot:
 		await self.client.get_channel(self.room['azioniCH']).send(content=str(e), allowed_mentions=allowed_mentions)
 
 	async def runLoop(self):
-		await self.Clock.sleep(self.Agent.dentro)
+		await self.Clock.sleep()
 		if self.SESSION != "run":
 			return
 		await self.client.get_channel(self.room['attivitaCH']).send(f"Connection check({self.Clock.time()}).")
-		#data = get_data(Agent.currentName)
-		#info0 = data.iloc[-1]
-		#await self.client.get_channel(datiCH).send(f"[{Agent.exchange}] {info0.name}| Open:{info0['Open']}/Low:{info0['Low']}/High:{info0['High']}/Close:{info0['Close']}")
-		print(">>>",self.Agent.actOnPosition())
-		flag, r = self.Agent.actOnPosition()
-		print(self.Agent.dentro)
-		if flag:
+		# print current situation every hour
+		await message.channel.send(self.Agent.Strategy.get_current_state())
+		transaction_happened, r = self.Agent.actOnPosition()
+		if transaction_happened:
 			# Transaction message
 			await self.client.get_channel(self.room['transazioniCH']).send(f"[{self.name}] "+r)
 			# Action message
 			allowed_mentions = discord.AllowedMentions(everyone = True)
 			await self.client.get_channel(self.room['azioniCH']).send(content=f"[{self.name}] @everyone Stock transaction happened.", allowed_mentions=allowed_mentions)
-			#r = self.Agent.get_current_state(data)
-			#await self.client.get_channel(self.room['azioniCH']).send(r)
-		

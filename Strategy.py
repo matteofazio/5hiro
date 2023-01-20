@@ -1,5 +1,4 @@
 import pandas as pd
-import pandas_ta as pa
 from yfinance import download
 from datetime import datetime, timedelta
 from sktime.classification.kernel_based import RocketClassifier

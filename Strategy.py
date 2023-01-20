@@ -1,7 +1,6 @@
 import pandas as pd
 from yfinance import download
 from datetime import datetime, timedelta
-from sktime.classification.kernel_based import RocketClassifier
 from cryptography.fernet import Fernet
 from pickle import load
 import os
@@ -30,6 +29,7 @@ class Strategy:
 
 	def loadModel(self):
 		print("Starting to load model...")
+		from sktime.classification.kernel_based import RocketClassifier
 		fernet = Fernet(os.environ['FERNET'])
 		f = open("cmodel.pkl","rb")
 		text = f.read()

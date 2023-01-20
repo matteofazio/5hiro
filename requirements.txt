@@ -1,5 +1,5 @@
 asyncio
-binance-connector
+binance-connector==1.16.0
 cryptography
 discord.py==1.7.3
 Flask

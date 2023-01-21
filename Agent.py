@@ -7,8 +7,11 @@ DEFAULT_TRAILING_DELTA = 0.01
 class Agent:
 	def __init__(self):
 		self.exchange = "ETH"
+		print("b1")
 		self.Trader = TraderLib.Trader(self.exchange)
+		print("b2")
 		self.Strategy = StrategyLib.Strategy(self.exchange)
+		print("b3")
 		
 		self.strategy = "-"
 

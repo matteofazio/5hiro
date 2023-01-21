@@ -18,7 +18,9 @@ class Trader:
 		self.staticETH = 0.0000
 		self.money = 0
 		self.stocks = 0
+		print("b4")
 		self.get_balance()
+		print("b5")
 
 	def get_price(self):
 		return float(requests.get(f'https://api.binance.com/api/v3/ticker/price?symbol={self.exchange}EUR').json()["price"])

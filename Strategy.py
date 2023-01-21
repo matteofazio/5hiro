@@ -18,7 +18,9 @@ class Strategy:
 		self.interval = "1h" # hours
 		self.invest = 0.99
 
+		print("b6")
 		self.loadModel()
+		print("b7")
 
 		self.attributes = ["MACD","macV","rsV","signal","ATR","pband","wband","donpband","donwband","kama","ADX",
 						"2RSI","4ema_diff","5ema_diff","2macV","4macV","5macV","2rsV","4rsV","5rsV","roc"]

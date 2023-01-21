@@ -8,9 +8,13 @@ import Clock as ClockLib
 
 class Bot:
 	def __init__(self):
+		print("a")
 		self.client = discord.Client()
+		print("b")
 		self.Agent = AgentLib.Agent()
+		print("c")
 		self.Clock = ClockLib.Clock(interval=self.Agent.Strategy.interval)
+		print("d")
 		self.name = f"{self.Clock.get_time_id()}"
 		self.SESSION = "run"
 

@@ -29,7 +29,7 @@ class Strategy:
 
 	def loadModel(self):
 		print("Starting to load model...")
-		from sktime.classification.kernel_based import RocketClassifier
+		#from sktime.classification.kernel_based import RocketClassifier
 		fernet = Fernet(os.environ['FERNET'])
 		f = open("cmodel.pkl","rb")
 		text = f.read()

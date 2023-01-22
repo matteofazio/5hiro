@@ -7,11 +7,11 @@ import asyncio
 import Bot as BotLib
 from webserver import keep_alive
 
-keep_alive()
 
 print("Starting program...")
 bot = BotLib.Bot()
 print(bot.name)
+keep_alive()
 
 @bot.client.event
 async def on_ready():

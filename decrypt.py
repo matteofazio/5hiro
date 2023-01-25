@@ -1,4 +1,5 @@
 from cryptography.fernet import Fernet
+import os
 
 key = os.environ['FERNET']
 fernet = Fernet(key)

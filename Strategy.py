@@ -32,13 +32,13 @@ class Strategy:
 	def loadModel(self):
 		print("Starting to load model...")
 		#from sktime.classification.kernel_based import RocketClassifier
-		fernet = Fernet(os.environ['FERNET'])
-		f = open("cmodel.pkl","rb")
-		text = f.read()
-		f.close()
-		f = open("model.pkl","wb")
-		f.write(fernet.decrypt(text))
-		f.close()
+		# fernet = Fernet(os.environ['FERNET'])
+		# f = open("cmodel.pkl","rb")
+		# text = f.read()
+		# f.close()
+		# f = open("model.pkl","wb")
+		# f.write(fernet.decrypt(text))
+		# f.close()
 		with open("model.pkl","rb") as model:
 			self.model = load(model)
 		print("Finished loading model.")

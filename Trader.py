@@ -47,6 +47,7 @@ class Trader:
 		money,stocks = self.get_balance()
 		price = self.get_price()
 		quantity = floor((self.LOT_STEP)*money/price)/(self.LOT_STEP) # LOT_STEP is (0.0001 ETH) and (0.00001 BTC)
+		return "ok"
 		if short==True:
 			params_order = {
 				'symbol': f'{self.exchange}EUR',

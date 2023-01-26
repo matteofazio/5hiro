@@ -127,7 +127,6 @@ class Trader:
 			'recvWindow': 60000
 		}
 		v = self.client.my_trades(**params)
-		print(v)
 		return str(v).replace("}, {","},\n{")
 
 	def manual_buy_amount(self, eur):

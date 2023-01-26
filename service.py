@@ -85,7 +85,7 @@ async def on_message(message):
 		elif message.content=="current orders":
 			await message.channel.send(bot.Agent.Trader.get_current_open_orders())
 		elif message.content=="history":
-			await message.channel.send(bot.Trader.get_trade_history())
+			await message.channel.send(bot.Agent.Trader.get_trade_history())
 		elif message.content.split(" ")[0]=="manualBuy":
 			await message.channel.send(bot.Agent.Trader.manual_buy_amount(float(message.content.split(" ")[1])))
 		elif message.content.split(" ")[0]=="manualSell":

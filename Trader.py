@@ -44,7 +44,7 @@ class Trader:
 		
 	def openOrder(self, short, trailing_delta):
 		money,stocks = self.get_balance()
-		price = get_price()
+		price = self.get_price()
 		quantity = floor((self.LOT_STEP)*money/price)/(self.LOT_STEP) # LOT_STEP is (0.0001 ETH) and (0.00001 BTC)
 		if short==True:
 			params_order = {

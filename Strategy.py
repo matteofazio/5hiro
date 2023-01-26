@@ -54,7 +54,7 @@ class Strategy:
 
 		# Pre check
 		
-		if self.check_basic_signal():
+		if not(self.check_basic_signal()): # if it's not okay I exit
 			return strategy, trailing_delta
 
 		prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))

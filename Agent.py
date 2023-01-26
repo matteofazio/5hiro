@@ -67,7 +67,7 @@ class Agent:
 
 	def actOnPosition(self, must_be_new=True):
 		if not self.dentro():
-			return self.check_buy(must_be_new)
+			return self.check_buy(forced=False,forced_short=False,must_be_new=must_be_new)
 		else:
 			return self.Strategy.actOnOpenPosition()
 		return [False,""] # This should not be executed

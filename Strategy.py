@@ -57,7 +57,7 @@ class Strategy:
 		if self.check_basic_signal():
 			return strategy, trailing_delta
 
-		prediction = int(self.model.predict(self.df[attributes].iloc[-1].values.reshape(1,1,len(attributes))))
+		prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
 		if prediction == 1:
 			strategy = "long5min"
 		elif prediction == 2:

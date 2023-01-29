@@ -199,6 +199,6 @@ class Strategy:
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		r = f"pband: {self.df.pband.iloc[-1]} | isOutside (0,1): {self.check_basic_signal()} | prediction: {prediction}"
+		r = f"pband: {round(self.df.pband.iloc[-1],2)} | isOutside (0.3,0.7): {self.check_basic_signal()} | prediction: {prediction}"
 		return r
 

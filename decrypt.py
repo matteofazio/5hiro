@@ -6,10 +6,10 @@ fernet = Fernet(key)
 
 # decrypting
 print("Loading crypted model...")
-f = open("./cmodel.pkl","rb")
+f = open("cmodel.pkl","rb")
 text = f.read()
 f.close()
-f = open("./model.pkl","wb")
+f = open("model.pkl","wb")
 f.write(fernet.decrypt(text))
 f.close()
 print("Model decrypted.")

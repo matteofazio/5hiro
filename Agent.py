@@ -20,10 +20,12 @@ class Agent:
 		self.shorting = False
 
 	def dentro(self):
+		# NOTA: non c'e' una necessita' nel non mettere ordini contrastanti
+		# visto che funzionano in parallelo, ma logicamente e' una buona idea, forse
 		money,stocks = self.Trader.get_balance()
 		price = self.Trader.get_price()
-		long_position = money<5
-		short_position = stocks<0
+		long_position = self.Trader.lockedMoney!=0
+		short_position = self.Trader.lockedStocks!=0
 		return long_position or short_position
 
 	def buy(self, short=False, trailing_delta=DEFAULT_TRAILING_DELTA):
@@ -38,7 +40,8 @@ class Agent:
 		while k<MAX_k:
 			self.Trader.get_balance()
 			# if they changes by more than 10%
-			if abs(money-self.Trader.money)/money > 0.1 and abs(stocks-self.Trader.stocks)/stocks > 0.1:
+			# THIS MUST BE UPDATED WITH BETTER CONTROL
+			if abs(money-self.Trader.money)/money > 0.1 and abs(stocks+0.0000000001-self.Trader.stocks-self.Trader.lockedStocks)/(stocks+0.0000000001) > 0.1:
 				break
 			sleep(10)
 
@@ -74,10 +77,11 @@ class Agent:
 
 	def get_total_balance(self):
 		self.Trader.get_balance()
-		return f"Balance: {self.Trader.money}€+(static{self.Trader.staticMoney}€) /"+\
-				f" Crypto: {self.Trader.stocks}{self.exchange}({self.Trader.get_price()*self.Trader.stocks}€)"+\
-				f"({self.Trader.get_price()}ETH/€) /"+\
-				f" Total(ETH+BUSD): {self.Trader.money+self.Trader.get_price()*self.Trader.stocks}€"
+		return f"EUR: free({self.Trader.money}€),locked({self.Trader.lockedMoney}€)+(static{self.Trader.staticMoney}€)\n"+\
+				f"Crypto: free({self.Trader.stocks}{self.exchange}),locked({self.Trader.lockedStocks}{self.exchange})+(static{self.Trader.staticBTC}€)\n"+\
+				f"({self.Trader.get_price()}{self.exchange}/€) /"+\
+				f"Price: {({self.Trader.get_price()*self.Trader.stocks}€)}"
+				f" Total({self.exchange}+EUR): {self.Trader.money+self.Trader.lockedMoney+self.Trader.get_price()*(self.Trader.stocks+self.Trader.lockedStocks)}€"
 
 	def get_current_state(self, data):
 		#self.Strategy.updateData() low priority call

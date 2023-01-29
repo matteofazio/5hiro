@@ -15,10 +15,12 @@ class Trader:
 		self.client = Spot(key=self.api_key, secret=self.api_sec)
 
 		# portfolio statistics
-		self.staticMoney = 50
-		self.staticETH = 0.0000
+		self.staticMoney = 5
+		self.staticBTC = 0.0023 # 50 eur roughly
 		self.money = 0
+		self.lockedMoney = 0
 		self.stocks = 0
+		self.lockedStocks = 0
 		print("b4")
 		self.get_balance()
 		print("b5")
@@ -32,35 +34,44 @@ class Trader:
 		}
 		v = self.client.account(**params)["balances"]
 		money = 0
-		stocks= 0
+		stocks = 0
+		lockedStocks = 0
+		lockedMoney = 0
 		# da controllare
 		for i in v:
 			if i["asset"] == "BTC":
-				stocks = float(i["free"])-self.staticETH
+				stocks = float(i["free"])-self.staticBTC
+				lockedStocks = float(i["locked"])
 			if i["asset"] == "EUR":
 				money = float(i["free"])-self.staticMoney
+				lockedMoney = float(i["locked"])
 		self.money = money
 		self.stocks = stocks
+		self.lockedStocks = lockedStocks
+		self.lockedMoney = lockedMoney
 		return money,stocks
 		
 	def openOrder(self, short, trailing_delta):
 		money,stocks = self.get_balance()
 		price = self.get_price()
-		quantity = floor((self.LOT_STEP)*money/price)/(self.LOT_STEP) # LOT_STEP is (0.0001 ETH) and (0.00001 BTC)
+		# for long positions
+		quantityLong = floor((self.LOT_STEP)*money/price)/(self.LOT_STEP) # LOT_STEP is (0.0001 ETH) and (0.00001 BTC)
+		# for short positions
+		quantityShort = floor((self.LOT_STEP)*0.95*(stocks+self.staticBTC))/(self.LOT_STEP)
 		#return "ok"
 		if short==True:
 			params_order = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'SELL',
 				'type': 'MARKET',
-				'quantity': quantity, # 0.0135 BTC
+				'quantity': quantityShort, # 0.0135 BTC
 				'recvWindow': 60000
 			}
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'BUY',
 				'type': 'STOP_LOSS_LIMIT',
-				'quantity': quantity,
+				'quantity': quantityShort,
 				'price': price,
 				'timeInForce': 'GTC',
 				'trailingDelta': 100,
@@ -71,14 +82,14 @@ class Trader:
 				'symbol': f'{self.exchange}EUR',
 				'side': 'BUY',
 				'type': 'MARKET',
-				'quantity': quantity,
+				'quantity': quantityLong,
 				'recvWindow': 60000
 			}
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'SELL',
 				'type': 'STOP_LOSS_LIMIT',
-				'quantity': quantity,
+				'quantity': quantityLong,
 				'price': price,
 				'timeInForce': 'GTC',
 				'trailingDelta': 100,

@@ -80,7 +80,7 @@ class Agent:
 		return f"EUR: free({self.Trader.money}€),locked({self.Trader.lockedMoney}€)+(static{self.Trader.staticMoney}€)\n"+\
 				f"Crypto: free({self.Trader.stocks}{self.exchange}),locked({self.Trader.lockedStocks}{self.exchange})+(static{self.Trader.staticBTC}€)\n"+\
 				f"({self.Trader.get_price()}{self.exchange}/€) /"+\
-				f"Price: {({self.Trader.get_price()*self.Trader.stocks}€)}"
+				f"Price: {({self.Trader.get_price()*self.Trader.stocks}€)}"+\
 				f" Total({self.exchange}+EUR): {self.Trader.money+self.Trader.lockedMoney+self.Trader.get_price()*(self.Trader.stocks+self.Trader.lockedStocks)}€"
 
 	def get_current_state(self, data):

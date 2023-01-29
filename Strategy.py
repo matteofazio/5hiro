@@ -44,10 +44,13 @@ class Strategy:
 		print("Finished loading model.")
 
 	def check_basic_signal(self):
-		outside = abs(self.df.pband.iloc[-1])>1.1 or abs(self.df.pband.iloc[-1])<-0.1
+		outside = abs(self.df.pband.iloc[-1])>0.7 or abs(self.df.pband.iloc[-1])<0.3
 		return outside
 
 	def checkEnter(self, must_be_new=True):
+		NULL_TREND = -1
+		DOWN_TREND_CLASS = 0
+		UP_TREND_CLASS = 1
 		self.updateData(must_be_new=must_be_new)
 		strategy = "-"
 		trailing_delta = 0.01
@@ -57,10 +60,15 @@ class Strategy:
 		if not(self.check_basic_signal()): # if it's not okay I exit
 			return strategy, trailing_delta
 
-		prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		if prediction == 1:
+		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
+		if self.df.pband.iloc[-1]>0.7:
+			prediction = DOWN_TREND_CLASS
+		elif self.df.pband.iloc[-1]<0.3:
+			prediction = UP_TREND_CLASS
+
+		if prediction == UP_TREND_CLASS:
 			strategy = "long5min"
-		elif prediction == 2:
+		elif prediction == DOWN_TREND_CLASS:
 			strategy = "short5min"
 		return strategy, trailing_delta
 

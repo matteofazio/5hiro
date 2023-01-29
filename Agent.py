@@ -39,11 +39,12 @@ class Agent:
 		MAX_k = 6
 		while k<MAX_k:
 			self.Trader.get_balance()
-			# if they changes by more than 10%
 			# THIS MUST BE UPDATED WITH BETTER CONTROL
-			if abs(money-self.Trader.money)/money > 0.1 and abs(stocks+0.0000000001-self.Trader.stocks-self.Trader.lockedStocks)/(stocks+0.0000000001) > 0.1:
+			# here I should check the buy and trailing stop order individually
+			if self.Trader.lockedMoney!=0 or self.Trader.lockedStocks!=0:
 				break
 			sleep(10)
+			k += 1
 
 		if k==MAX_k:
 			return [False,"Transaction had a problem."]

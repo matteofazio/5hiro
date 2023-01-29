@@ -152,6 +152,22 @@ class Trader:
 		v = self.client.new_order(**params_order)
 		return v
 
+	def manual_long_trailing_stop(self, quantity):
+		self.get_balance()
+		price = self.get_price()
+		params_stop_trail = {
+			'symbol': f'{self.exchange}EUR',
+			'side': 'SELL',
+			'type': 'STOP_LOSS_LIMIT',
+			'quantity': quantity,
+			'price': price,
+			'timeInForce': 'GTC',
+			'trailingDelta': 100,
+			'recvWindow': 60000
+		}
+		v = self.client.new_order(**params_stop_trail)
+		return v
+
 	def manual_sell_amount(self, coin):
 		self.get_balance()
 		coin = floor((self.LOT_STEP)*coin)/(self.LOT_STEP)
@@ -163,6 +179,22 @@ class Trader:
 			'recvWindow': 60000
 		}
 		v = self.client.new_order(**params_order)
+		return v
+
+	def manual_short_trailing_stop(self, quantity):
+		self.get_balance()
+		price = self.get_price()
+		params_stop_trail = {
+			'symbol': f'{self.exchange}EUR',
+			'side': 'BUY',
+			'type': 'STOP_LOSS_LIMIT',
+			'quantity': quantity,
+			'price': price,
+			'timeInForce': 'GTC',
+			'trailingDelta': 100,
+			'recvWindow': 60000
+		}
+		v = self.client.new_order(**params_stop_trail)
 		return v
 
 	def closeOrder(self):

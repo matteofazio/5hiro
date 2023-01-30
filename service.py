@@ -66,7 +66,7 @@ async def on_message(message):
 		# 	await bot.client.close()
 		# # Help command
 		elif message.content=="help" or message.content=="h":
-			await message.channel.send(f"help-h\nshutdown-s\nbalance-b\ncancel(orders)\ncurrent orders\nhistory\nmanualBuy <eur>\nmanualSell <crypto>\ncs (current state)\ntry checking now")
+			await message.channel.send(f"help-h\nshutdown-s\nbalance-b\ncancel(orders)\ncurrent orders\nhistory\nmanualBuy <eur>\nmanualSell <crypto>\ncs (current state)\nmanual long trailing stop <quantity>\nmanual short trailing stop <quantity>\ntry checking now")
 		# # Version command
 		# elif message.content=="version" or message.content=="v":
 		# 	await message.channel.send(f"B2.0.0")
@@ -90,6 +90,10 @@ async def on_message(message):
 			await message.channel.send(bot.Agent.Trader.manual_buy_amount(float(message.content.split(" ")[1])))
 		elif message.content.split(" ")[0]=="manualSell":
 			await message.channel.send(bot.Agent.Trader.manual_sell_amount(float(message.content.split(" ")[1])))
+		elif " ".join(message.content.split(" ")[:-1])=="manual long trailing stop":
+			await message.channel.send(bot.Agent.Trader.manual_long_trailing_stop(float(message.content.split(" ")[-1])))
+		elif " ".join(message.content.split(" ")[:-1])=="manual short trailing stop":
+			await message.channel.send(bot.Agent.Trader.manual_short_trailing_stop(float(message.content.split(" ")[-1])))			
 		elif message.content=="cs":
 			await message.channel.send(bot.Agent.Strategy.get_current_state())
 		elif message.content=="try checking now":

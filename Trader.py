@@ -154,7 +154,7 @@ class Trader:
 
 	def manual_long_trailing_stop(self, quantity):
 		self.get_balance()
-		price = self.get_price()
+		price = self.get_price()+10
 		params_stop_trail = {
 			'symbol': f'{self.exchange}EUR',
 			'side': 'SELL',
@@ -183,7 +183,7 @@ class Trader:
 
 	def manual_short_trailing_stop(self, quantity):
 		self.get_balance()
-		price = self.get_price()
+		price = self.get_price()-10
 		params_stop_trail = {
 			'symbol': f'{self.exchange}EUR',
 			'side': 'BUY',

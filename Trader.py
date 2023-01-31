@@ -72,7 +72,7 @@ class Trader:
 				'side': 'BUY',
 				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityShort,
-				'price': price-10,
+				'price': price+1000,
 				'timeInForce': 'GTC',
 				'trailingDelta': 100,
 				'recvWindow': 60000
@@ -90,7 +90,7 @@ class Trader:
 				'side': 'SELL',
 				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityLong,
-				'price': price+10,
+				'price': price-1000,
 				'timeInForce': 'GTC',
 				'trailingDelta': 100,
 				'recvWindow': 60000

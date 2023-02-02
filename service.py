@@ -5,7 +5,6 @@ import traceback
 import os
 import asyncio
 import Bot as BotLib
-from webserver import keep_alive
 
 print("Starting program...")
 bot = BotLib.Bot()

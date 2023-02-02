@@ -7,7 +7,7 @@ import os
 class Trader:
 	def __init__(self,exchange):
 		self.exchange = exchange
-		self.LOT_STEP = 10**5 # for BTC, for ETH is 10**4
+		self.LOT_STEP = 10**2 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4, 
 
 		# dati api
 		self.api_key = os.environ['API_KEY']
@@ -16,7 +16,7 @@ class Trader:
 
 		# portfolio statistics
 		self.staticMoney = 5
-		self.staticBTC = 0.0023 # 50 eur roughly
+		self.staticCrypto = 1.94805 # 45 eur roughly
 		self.money = 0
 		self.lockedMoney = 0
 		self.stocks = 0
@@ -39,8 +39,8 @@ class Trader:
 		lockedMoney = 0
 		# da controllare
 		for i in v:
-			if i["asset"] == "BTC":
-				stocks = float(i["free"])-self.staticBTC
+			if i["asset"] == self.exchange:
+				stocks = float(i["free"])-self.staticCrypto
 				lockedStocks = float(i["locked"])
 			if i["asset"] == "EUR":
 				money = float(i["free"])-self.staticMoney
@@ -57,7 +57,7 @@ class Trader:
 		# for long positions
 		quantityLong = floor((self.LOT_STEP)*money/price)/(self.LOT_STEP) # LOT_STEP is (0.0001 ETH) and (0.00001 BTC)
 		# for short positions
-		quantityShort = floor((self.LOT_STEP)*0.95*(stocks+self.staticBTC))/(self.LOT_STEP)
+		quantityShort = floor((self.LOT_STEP)*0.95*(stocks+self.staticCrypto))/(self.LOT_STEP)
 		#return "ok"
 		if short==True:
 			params_order = {
@@ -74,7 +74,7 @@ class Trader:
 				'quantity': quantityShort,
 				'price': price+1000,
 				'timeInForce': 'GTC',
-				'trailingDelta': 100,
+				'trailingDelta': int(trailing_delta*100),
 				'recvWindow': 60000
 			}
 		else:
@@ -92,7 +92,7 @@ class Trader:
 				'quantity': quantityLong,
 				'price': price-1000,
 				'timeInForce': 'GTC',
-				'trailingDelta': 100,
+				'trailingDelta': int(trailing_delta*100),
 				'recvWindow': 60000
 			}
 		v = "-"
@@ -114,7 +114,7 @@ class Trader:
 	# ======== Useful non necessary requests ======== #
 	def cancel_open_orders(self):
 		params = {
-			'symbol': 'BTCEUR',
+			'symbol': f'{self.exchange}EUR',
 			'recvWindow': 60000
 		}
 		v = self.client.cancel_open_orders(**params)

@@ -14,7 +14,7 @@ class Strategy:
 	def __init__(self, exchange):
 		self.df = -1
 		self.data = -1
-		self.exchange = exchange+"-EUR"
+		self.exchange = exchange
 		self.interval = "1h" # hours
 		self.invest = 0.99
 
@@ -53,7 +53,7 @@ class Strategy:
 		UP_TREND_CLASS = 1
 		self.updateData(must_be_new=must_be_new)
 		strategy = "-"
-		trailing_delta = 0.01
+		trailing_delta = 0.3 # must be in %
 
 		# Pre check
 		
@@ -96,7 +96,7 @@ class Strategy:
 
 		i = 0
 		while i<10:
-			self.df = download(self.exchange, start=(datetime.now()-timedelta(hours=STEP)).date(), end=datetime.now(), interval=self.interval, auto_adjust=False, prepost=False).astype(float).sort_index()
+			self.df = download(self.exchange+"-EUR", start=(datetime.now()-timedelta(hours=STEP)).date(), end=datetime.now(), interval=self.interval, auto_adjust=False, prepost=False).astype(float).sort_index()
 			if not must_be_new:
 				break
 			struct_time = gmtime(self.df.index[-1].timestamp())

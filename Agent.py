@@ -79,7 +79,7 @@ class Agent:
 	def get_total_balance(self):
 		self.Trader.get_balance()
 		return f"EUR: free({self.Trader.money}€),locked({self.Trader.lockedMoney}€)+(static{self.Trader.staticMoney}€)\n"+\
-				f"Crypto: free({self.Trader.stocks}{self.exchange}),locked({self.Trader.lockedStocks}{self.exchange})+(static{self.Trader.staticBTC}{self.exchange})\n"+\
+				f"Crypto: free({self.Trader.stocks}{self.exchange}),locked({self.Trader.lockedStocks}{self.exchange})+(static{self.Trader.staticCrypto}{self.exchange})\n"+\
 				f"Price: {self.Trader.get_price()}{self.exchange}/€\n"+\
 				f" Total({self.exchange}+EUR): {self.Trader.money+self.Trader.lockedMoney+self.Trader.get_price()*(self.Trader.stocks+self.Trader.lockedStocks)}€"
 

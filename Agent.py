@@ -2,7 +2,7 @@ from time import sleep, time
 import Strategy as StrategyLib
 import Trader as TraderLib
 
-DEFAULT_TRAILING_DELTA = 0.01
+DEFAULT_TRAILING_DELTA = 0.3
 
 class Agent:
 	def __init__(self):
@@ -78,10 +78,10 @@ class Agent:
 
 	def get_total_balance(self):
 		self.Trader.get_balance()
-		return f"EUR: free({self.Trader.money}€),locked({self.Trader.lockedMoney}€)+(static{self.Trader.staticMoney}€)\n"+\
-				f"Crypto: free({self.Trader.stocks}{self.exchange}),locked({self.Trader.lockedStocks}{self.exchange})+(static{self.Trader.staticCrypto}{self.exchange})\n"+\
+		return f"EUR: free({round(self.Trader.money,2)}€),locked({round(self.Trader.lockedMoney,2)}€)+(static{self.Trader.staticMoney}€)\n"+\
+				f"Crypto: free({round(self.Trader.stocks,5)}{self.exchange}),locked({round(self.Trader.lockedStocks,5)}{self.exchange})+(static{round(self.Trader.staticCrypto,5)}{self.exchange})\n"+\
 				f"Price: {self.Trader.get_price()}{self.exchange}/€\n"+\
-				f" Total({self.exchange}+EUR): {self.Trader.money+self.Trader.lockedMoney+self.Trader.get_price()*(self.Trader.stocks+self.Trader.lockedStocks)}€"
+				f" Total({self.exchange}+EUR): {round(self.Trader.money+self.Trader.lockedMoney+self.Trader.get_price()*(self.Trader.stocks+self.Trader.lockedStocks),5)}€"
 
 	def get_current_state(self, data):
 		#self.Strategy.updateData() low priority call

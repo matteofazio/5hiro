@@ -72,7 +72,7 @@ class Trader:
 				'side': 'BUY',
 				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityShort,
-				'price': price+1000,
+				'price': round(price*1.2,2),
 				'timeInForce': 'GTC',
 				'trailingDelta': int(trailing_delta*100),
 				'recvWindow': 60000
@@ -90,7 +90,7 @@ class Trader:
 				'side': 'SELL',
 				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityLong,
-				'price': price-1000,
+				'price': round(price*0.8,2),
 				'timeInForce': 'GTC',
 				'trailingDelta': int(trailing_delta*100),
 				'recvWindow': 60000
@@ -137,8 +137,13 @@ class Trader:
 			"endTime": int(time()*1000)-5,
 			'recvWindow': 60000
 		}
-		v = self.client.my_trades(**params)
-		return str(v).replace("}, {","},\n{")
+		v = ""
+		ve = ""
+		try:
+			v = self.client.my_trades(**params)
+		except Exception as e:
+			ve = e
+		return v+ve
 
 	def manual_buy_amount(self, eur):
 		self.get_balance()
@@ -160,9 +165,9 @@ class Trader:
 			'side': 'SELL',
 			'type': 'STOP_LOSS_LIMIT',
 			'quantity': quantity,
-			'price': price,
+			'price': round(price*0.8,2),
 			'timeInForce': 'GTC',
-			'trailingDelta': 100,
+			'trailingDelta': 30,
 			'recvWindow': 60000
 		}
 		v = self.client.new_order(**params_stop_trail)
@@ -189,9 +194,9 @@ class Trader:
 			'side': 'BUY',
 			'type': 'STOP_LOSS_LIMIT',
 			'quantity': quantity,
-			'price': price,
+			'price': round(price*1.2,2),
 			'timeInForce': 'GTC',
-			'trailingDelta': 100,
+			'trailingDelta': 30,
 			'recvWindow': 60000
 		}
 		v = self.client.new_order(**params_stop_trail)

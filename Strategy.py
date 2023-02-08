@@ -9,11 +9,11 @@ from time import gmtime, mktime
 from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
+import talib
 
 class Strategy:
 	def __init__(self, exchange):
 		self.df = -1
-		self.data = -1
 		self.exchange = exchange
 		self.interval = "1h" # hours
 		self.invest = 0.99
@@ -22,8 +22,7 @@ class Strategy:
 		self.loadModel()
 		print("b7")
 
-		self.attributes = ["MACD","macV","rsV","signal","ATR","pband","wband","donpband","donwband","kama","ADX",
-						"2RSI","4ema_diff","5ema_diff","2macV","4macV","5macV","2rsV","4rsV","5rsV","roc"]
+		self.attributes = ["CDLENGULFING"]
 
 		# parametri
 		# self.tassa = 0.01
@@ -44,8 +43,9 @@ class Strategy:
 		print("Finished loading model.")
 
 	def check_basic_signal(self):
-		outside = abs(self.df.pband.iloc[-1])>0.7 or abs(self.df.pband.iloc[-1])<0.3
-		return outside
+		# outside = abs(self.df.pband.iloc[-1])>0.7 or abs(self.df.pband.iloc[-1])<0.3
+		engulfing = abs(self.df["CDLENGULFING"].iloc[-1]) == 100
+		return engulfing
 
 	def checkEnter(self, must_be_new=True):
 		NULL_TREND = -1
@@ -53,7 +53,7 @@ class Strategy:
 		UP_TREND_CLASS = 1
 		self.updateData(must_be_new=must_be_new)
 		strategy = "-"
-		trailing_delta = 0.3 # must be in %
+		trailing_delta = 1.6 # must be in %
 
 		# Pre check
 		
@@ -61,9 +61,9 @@ class Strategy:
 			return strategy, trailing_delta
 
 		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		if self.df.pband.iloc[-1]>0.7:
+		if self.df["CDLENGULFING"].iloc[-1]==100:
 			prediction = DOWN_TREND_CLASS
-		elif self.df.pband.iloc[-1]<0.3:
+		elif self.df["CDLENGULFING"].iloc[-1]==-100:
 			prediction = UP_TREND_CLASS
 
 		if prediction == UP_TREND_CLASS:
@@ -92,16 +92,18 @@ class Strategy:
 		return False
 
 	def getRawData(self,must_be_new=True): # CONTROLLARE CHE SIA AGGIORNATO
-		STEP = 400
+		STEP = 100
 
 		i = 0
 		while i<10:
-			self.df = download(self.exchange+"-EUR", start=(datetime.now()-timedelta(hours=STEP)).date(), end=datetime.now(), interval=self.interval, auto_adjust=False, prepost=False).astype(float).sort_index()
+			cols = ["Time","Open","High","Low","Close","Volume","Close_time","qtav","nTrades","taker_base_av","taker_quote_av","unused"]
+			r = requests.get(f'https://api.binance.com/api/v3/klines?symbol={self.exchange}EUR&interval={self.interval}&limit={STEP}').json()
+			self.df = pd.DataFrame(r,columns=cols).set_index("Time")
+			#self.df = download(self.exchange+"-EUR", start=(datetime.now()-timedelta(hours=STEP)).date(), end=datetime.now(), interval=self.interval, auto_adjust=False, prepost=False).astype(float).sort_index()
 			if not must_be_new:
 				break
-			struct_time = gmtime(self.df.index[-1].timestamp())
-			seconds = mktime(struct_time)
-			if (datetime.utcnow().timestamp()-seconds)/60<20:
+			seconds = self.df.index[-1]
+			if (time()-seconds/1000)/60<20:
 				break
 			i += 1
 			sleep(10)
@@ -109,14 +111,13 @@ class Strategy:
 			raise Exception("Couldn't fetch data correctly.")
 		self.df.index.names = ["Gmt time"]
 		self.df = self.df[['Open','High','Low','Close','Volume']]
-		self.data = self.df
 
 	def updateData(self,must_be_new=True):
 		self.getRawData(must_be_new)
 		# Analyzing data
 
 		# Normalizing parameters
-		RSI = 100
+"""		RSI = 100
 		_MACD = 766.6113797470252
 		MACV = 415.2976664892511
 		RSV = 21.52645746367356
@@ -192,13 +193,17 @@ class Strategy:
 		self.df['roc'] = roc.roc()/ROC
 
 		adx = ADXIndicator(self.df['High'],self.df['Low'],self.df['Close'])
-		self.df['ADX'] = adx.adx()/100
+		self.df['ADX'] = adx.adx()/100"""
+
+		
+		candle = "CDLENGULFING"
+		self.df[candle] = getattr(talib, candle)(self.df['Open'], self.df['High'], self.df['Low'], self.df['Close'])
 
 		self.df = self.df[self.attributes]
 
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		r = f"pband: {round(self.df.pband.iloc[-1],2)} | isOutside (0.3,0.7): {self.check_basic_signal()} | prediction: {prediction}"
+		r = f"pband: {round(self.df.pband.iloc[-1],2)} | isEngulfing: {self.check_basic_signal()} | prediction: {prediction}"
 		return r
 

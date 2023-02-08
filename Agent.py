@@ -2,11 +2,11 @@ from time import sleep, time
 import Strategy as StrategyLib
 import Trader as TraderLib
 
-DEFAULT_TRAILING_DELTA = 0.3
+DEFAULT_TRAILING_DELTA = 1.6
 
 class Agent:
 	def __init__(self):
-		self.exchange = "SOL"
+		self.exchange = "BTC"
 		print("b1")
 		self.Trader = TraderLib.Trader(self.exchange)
 		print("b2")

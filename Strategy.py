@@ -1,7 +1,7 @@
 import pandas as pd
 from yfinance import download
 from datetime import datetime, timedelta
-from time import time
+from time import time, sleep
 from cryptography.fernet import Fernet
 from pickle import load
 import os

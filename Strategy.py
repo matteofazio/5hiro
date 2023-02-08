@@ -9,6 +9,7 @@ from time import gmtime, mktime
 from ta.trend import *
 from ta.momentum import *
 from ta.volatility import *
+import requests
 import talib
 
 class Strategy:

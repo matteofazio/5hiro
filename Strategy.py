@@ -117,7 +117,7 @@ class Strategy:
 		# Analyzing data
 
 		# Normalizing parameters
-"""		RSI = 100
+		"""RSI = 100
 		_MACD = 766.6113797470252
 		MACV = 415.2976664892511
 		RSV = 21.52645746367356

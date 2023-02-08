@@ -16,7 +16,7 @@ class Trader:
 
 		# portfolio statistics
 		self.staticMoney = 5
-		self.staticCrypto = 0 # 45 eur roughly
+		self.staticCrypto = 0.00204 # 45 eur roughly
 		self.money = 0
 		self.lockedMoney = 0
 		self.stocks = 0

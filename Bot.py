@@ -42,8 +42,8 @@ class Bot:
 			return
 		await self.client.get_channel(self.room['attivitaCH']).send(f"Connection check({self.Clock.time()}).")
 		# print current situation every hour
-		await self.client.get_channel(self.room['azioniCH']).send(self.Agent.Strategy.get_current_state())
 		transaction_happened, r = self.Agent.actOnPosition()
+		await self.client.get_channel(self.room['azioniCH']).send(self.Agent.Strategy.get_current_state())
 		if transaction_happened:
 			# Transaction message
 			await self.client.get_channel(self.room['transazioniCH']).send(f"[{self.name}] "+r)

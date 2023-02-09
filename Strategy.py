@@ -17,14 +17,14 @@ class Strategy:
 	def __init__(self, exchange):
 		self.df = -1
 		self.exchange = exchange
-		self.interval = "1h" # hours
+		self.interval = "5m" # hours
 		self.invest = 0.99
 
 		print("b6")
 		self.loadModel()
 		print("b7")
 
-		self.attributes = ["CDLENGULFING"]
+		self.attributes = ["CDLENGULFING","roc"]
 
 		# parametri
 		# self.tassa = 0.01
@@ -46,8 +46,15 @@ class Strategy:
 
 	def check_basic_signal(self):
 		# outside = abs(self.df.pband.iloc[-1])>0.7 or abs(self.df.pband.iloc[-1])<0.3
-		engulfing = abs(self.df["CDLENGULFING"].iloc[-1]) == 100
-		return engulfing
+		# engulfing = abs(self.df["CDLENGULFING"].iloc[-1]) == 100
+		return self.isLong() or self.isShort()
+
+	def isLong(self):
+		rocLong = self.df["CDLENGULFING"].iloc[-1]==-100 and 0.2826642081488359<self.df["roc"][-1]<4.543934569468048
+
+	def isShort(self):
+		rocShort = self.df["CDLENGULFING"].iloc[-1]==100 and 0.21102464612608376<self.df["roc"][-1]<7.983638591633049
+
 
 	def checkEnter(self, must_be_new=True):
 		NULL_TREND = -1
@@ -55,7 +62,7 @@ class Strategy:
 		UP_TREND_CLASS = 1
 		self.updateData(must_be_new=must_be_new)
 		strategy = "-"
-		trailing_delta = 1.6 # must be in %
+		trailing_delta = 2.2 # must be in %
 
 		# Pre check
 		
@@ -63,9 +70,9 @@ class Strategy:
 			return strategy, trailing_delta
 
 		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		if self.df["CDLENGULFING"].iloc[-1]==100:
+		if self.isShort():
 			prediction = DOWN_TREND_CLASS
-		elif self.df["CDLENGULFING"].iloc[-1]==-100:
+		elif self.isLong():
 			prediction = UP_TREND_CLASS
 
 		if prediction == UP_TREND_CLASS:
@@ -105,10 +112,10 @@ class Strategy:
 			if not must_be_new:
 				break
 			seconds = self.df.index[-1]
-			if (time()-seconds/1000)/60<20:
+			if (time()-seconds/1000)/60<2:
 				break
 			i += 1
-			sleep(10)
+			sleep(3)
 		if i==10:
 			raise Exception("Couldn't fetch data correctly.")
 		self.df.index.names = ["Gmt time"]
@@ -189,12 +196,12 @@ class Strategy:
 		self.df['donwband'] = donchian.donchian_channel_wband()
 
 		kama = KAMAIndicator(self.df['Close'])
-		self.df['kama'] = kama.kama()/KAMA
+		self.df['kama'] = kama.kama()/KAMA"""
 
 		roc = ROCIndicator(self.df['Close'])
-		self.df['roc'] = roc.roc()/ROC
+		self.df['roc'] = roc.roc()
 
-		adx = ADXIndicator(self.df['High'],self.df['Low'],self.df['Close'])
+		"""adx = ADXIndicator(self.df['High'],self.df['Low'],self.df['Close'])
 		self.df['ADX'] = adx.adx()/100"""
 
 		
@@ -206,6 +213,6 @@ class Strategy:
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		r = f"isEngulfing: {self.check_basic_signal()}"
+		r = f"isEngulfing: {self.check_basic_signal()}, roc: {self.df["roc"][-1]}"
 		return r
 

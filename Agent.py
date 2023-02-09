@@ -2,7 +2,7 @@ from time import sleep, time
 import Strategy as StrategyLib
 import Trader as TraderLib
 
-DEFAULT_TRAILING_DELTA = 1.6
+DEFAULT_TRAILING_DELTA = 2.2
 
 class Agent:
 	def __init__(self):

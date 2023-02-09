@@ -11,9 +11,9 @@ class Clock:
 	async def sleep(self):
 		now = [int(i) for i in datetime.fromtimestamp(time()).strftime("%H:%M:%S").split(":")]
 		if self.interval == "5m": # 5 minutes
-			minutes = now[1]%5
+			minutes = now[2]%5
 			secondsToSleep = (5-minutes)*60
-			secondsToSleep += 20-now[2] # 20 seconds after the 5 minutes
+			secondsToSleep += 7-now[2] # 20 seconds after the 5 minutes
 		elif self.interval == "1h":
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60

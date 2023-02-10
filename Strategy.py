@@ -118,7 +118,6 @@ class Strategy:
 			sleep(3)
 		if i==10:
 			raise Exception("Couldn't fetch data correctly.")
-		self.df.index.names = ["Gmt time"]
 		self.df = self.df[['Open','High','Low','Close','Volume']]
 
 	def updateData(self,must_be_new=True):
@@ -213,6 +212,6 @@ class Strategy:
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		r = f"isEngulfing: {self.check_basic_signal()}"
+		r = f"isEngulfing: {self.check_basic_signal()}, roc: "+self.df["roc"].iloc[-1]
 		return r
 

@@ -212,6 +212,7 @@ class Strategy:
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		#prediction = int(self.model.predict(self.df[self.attributes].iloc[-1].values.reshape(1,1,len(self.attributes))))
-		r = f"isEngulfing: {self.check_basic_signal()}, roc: "
+		rocValue = str(self.df["roc"].iloc[-1].value)
+		r = f"isEngulfing: {self.check_basic_signal()}, roc: {rocValue}"
 		return r
 

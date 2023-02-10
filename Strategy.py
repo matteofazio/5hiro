@@ -51,10 +51,11 @@ class Strategy:
 
 	def isLong(self):
 		rocLong = self.df["CDLENGULFING"].iloc[-1]==-100 and 0.2826642081488359<self.df["roc"][-1]<4.543934569468048
+		return rocLong
 
 	def isShort(self):
 		rocShort = self.df["CDLENGULFING"].iloc[-1]==100 and 0.21102464612608376<self.df["roc"][-1]<7.983638591633049
-
+		return rocShort
 
 	def checkEnter(self, must_be_new=True):
 		NULL_TREND = -1

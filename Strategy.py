@@ -107,7 +107,7 @@ class Strategy:
 		while i<10:
 			cols = ["Time","Open","High","Low","Close","Volume","Close_time","qtav","nTrades","taker_base_av","taker_quote_av","unused"]
 			r = requests.get(f'https://api.binance.com/api/v3/klines?symbol={self.exchange}EUR&interval={self.interval}&limit={STEP}').json()
-			self.df = pd.DataFrame(r,columns=cols).set_index("Time").apply(pd.to_numeric)
+			self.df = pd.DataFrame(r,columns=cols).set_index("Time").apply(pd.to_numeric).sort_index()
 			#self.df = download(self.exchange+"-EUR", start=(datetime.now()-timedelta(hours=STEP)).date(), end=datetime.now(), interval=self.interval, auto_adjust=False, prepost=False).astype(float).sort_index()
 			if not must_be_new:
 				break
@@ -117,7 +117,7 @@ class Strategy:
 			i += 1
 			sleep(3)
 		if i==10:
-			raise Exception("Couldn't fetch data correctly.")
+			raise Exception("Couldn't fetch data correctly.",seconds/1000,time(),(time()-seconds/1000)/60<2)
 		self.df = self.df[['Open','High','Low','Close','Volume']]
 
 	def updateData(self,must_be_new=True):

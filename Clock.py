@@ -13,7 +13,7 @@ class Clock:
 		if self.interval == "5m": # 5 minutes
 			minutes = now[1]%5
 			secondsToSleep = (5-minutes)*60
-			secondsToSleep += 7-now[2] # 20 seconds after the 5 minutes
+			secondsToSleep += 3-now[2] # 20 seconds after the 5 minutes
 		elif self.interval == "1h":
 			minutes = now[1]
 			secondsToSleep = (60-minutes)*60

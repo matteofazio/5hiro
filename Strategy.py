@@ -45,7 +45,7 @@ class Strategy:
 			sleep(3)
 		if i==10:
 			raise Exception("Couldn't fetch data correctly.",seconds/1000,time(),(time()-seconds/1000)/60<2)
-		self.df = self.df[['Open','High','Low','Close','Volume']]
+		self.df = self.df[['Open','High','Low','Close','Volume']].iloc[:-1]
 
 	def updateData(self,must_be_new=True):
 		self.getRawData(must_be_new)

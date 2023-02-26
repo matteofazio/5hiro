@@ -38,7 +38,7 @@ class Agent:
 			sleep(10)
 			k += 1
 		if k==MAX_k:
-			raise Exception("Oderd didn't go throught? Check.")
+			raise Exception("Oderd didn't go through? Check.")
 
 		if k==MAX_k:
 			return [True,"Transaction had a problem. Check."]

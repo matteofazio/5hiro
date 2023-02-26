@@ -68,12 +68,10 @@ class Strategy:
 		self.df = self.df[self.attributes]
 
 	def get_current_state(self):
-		self.updateData(must_be_new=False)
-		rocValue = str(round(self.df["roc"].iloc[-1],2))
+		self.updateData(must_be_new=True)
+		time = str(self.df.index[-1])
 		bbpValue = str(round(self.df["bbp"].iloc[-1],2))
-		demaValue = str(round(self.df["dema"].iloc[-1],2))
-		engulfing = abs(self.df["CDLENGULFING"].iloc[-1])==100
-		r = f"isEngulfing: {engulfing}, roc: {rocValue}, bbp: {bbpValue}, dema: {demaValue}"
+		r = f"time: {time}, bbp: {bbpValue}"
 		return r
 
 # decomment if needed

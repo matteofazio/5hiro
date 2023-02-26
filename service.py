@@ -49,12 +49,11 @@ async def on_message(message):
 	print(2,bot.name)
 	if message.content == "kill "+bot.name:
 		bot.SESSION = "exit"
-	# da rendere migliore
-	await message.channel.send(f"[{bot.name}] Received: {message.content}")
 
 	# dividere comandi tell and do <--
 
 	if message.channel.id==bot.room['azioniCH']:
+		await message.channel.send(f"[{bot.name}] Received: {message.content}")
 		# Temporary offline-mode
 		if message.content=="shutdown" or message.content=="s":
 			bot.SESSION = not bot.SESSION

@@ -68,7 +68,7 @@ class Strategy:
 		self.df = self.df[self.attributes]
 
 	def get_current_state(self):
-		self.updateData(must_be_new=True)
+		self.updateData(must_be_new=False)
 		time = str(self.df.index[-1])
 		bbpValue = str(round(self.df["bbp"].iloc[-1],2))
 		r = f"time: {time}, bbp: {bbpValue}"

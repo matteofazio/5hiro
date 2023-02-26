@@ -21,12 +21,12 @@ class Agent:
 		short_position = self.Trader.lockedStocks!=0
 		return long_position or short_position
 
-	def buy(self, short, trailing_delta):
+	def buy(self, short, PARAMS):
 		self.Trader.get_balance()
 		spesa = self.Strategy.invest*self.Trader.money
 		
 		money,stocks = self.Trader.money,self.Trader.stocks
-		result = self.Trader.openOrder(short,trailing_delta)
+		result = self.Trader.openOrder(short,PARAMS)
 		k = 0
 		MAX_k = 6
 		while k<MAX_k:
@@ -46,9 +46,9 @@ class Agent:
 			return [True,f"Strategy:{self.strategy}, result:{result}"] # da cambiare in self.strategy
 
 	def check_buy(self, must_be_new=True):
-		self.strategy, trailing_delta = self.Strategy.checkEnter(must_be_new)
+		self.strategy, PARAMS = self.Strategy.checkEnter(must_be_new)
 		if not self.dentro() and self.strategy != "-":
-			return self.buy("short" in self.strategy,trailing_delta)
+			return self.buy("short" in self.strategy,PARAMS)
 		return [False,""]
 
 	def updateData(self):

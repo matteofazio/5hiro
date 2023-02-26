@@ -7,7 +7,7 @@ import os
 class Trader:
 	def __init__(self,exchange):
 		self.exchange = exchange
-		self.LOT_STEP = 10**5 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4, 
+		self.LOT_STEP = 10**5 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4,
 
 		# dati api
 		self.api_key = os.environ['API_KEY']
@@ -51,7 +51,7 @@ class Trader:
 		self.lockedMoney = lockedMoney
 		return money,stocks
 		
-	def openOrder(self, short, trailing_delta):
+	def openOrder(self, short, PARAMS):
 		money,stocks = self.get_balance()
 		price = self.get_price()
 		# for long positions
@@ -70,11 +70,12 @@ class Trader:
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'BUY',
-				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityShort,
-				'price': round(price*1.2,2),
-				'timeInForce': 'GTC',
-				'trailingDelta': int(trailing_delta*100),
+				'price': round(price*0.8,2),
+				'stopPrice': round(price*(1+PARAMS.sl),2),
+				'stopLimitPrice': round(price*(1-PARAMS.sl*PARAMS.ratio),2),
+				'stopLimitTimeInForce':'GTC',
+				'trailingDelta': int(PARAMS.sl*10000),
 				'recvWindow': 60000
 			}
 		else:
@@ -88,11 +89,12 @@ class Trader:
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'SELL',
-				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityLong,
-				'price': round(price*0.8,2),
-				'timeInForce': 'GTC',
-				'trailingDelta': int(trailing_delta*100),
+				'price': round(price*1.2,2),
+				'stopPrice': round(price*(1-PARAMS.sl),2),
+				'stopLimitPrice': round(price*(1+PARAMS.sl*PARAMS.ratio),2),
+				'stopLimitTimeInForce':'GTC',
+				'trailingDelta': int(PARAMS.sl*10000),
 				'recvWindow': 60000
 			}
 		v = "-"

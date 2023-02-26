@@ -104,7 +104,7 @@ class Trader:
 			print(1)
 			v = self.client.new_order(**params_order)
 			print(2)
-			v2 = self.client.new_order(**params_stop_trail)
+			v2 = self.client.new_oco_order(**params_stop_trail)
 			print(3)
 		except Exception as e:
 			print(">",e)

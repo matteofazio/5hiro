@@ -67,14 +67,24 @@ class Trader:
 				'quantity': quantityShort, # 0.0135 BTC
 				'recvWindow': 60000
 			}
+			# params_stop_trail = {
+			# 	'symbol': f'{self.exchange}EUR',
+			# 	'side': 'BUY',
+			# 	'quantity': quantityShort,
+			# 	'price': round(price*0.8,2),
+			# 	'stopPrice': round(price*(1+PARAMS.sl),2),
+			# 	'stopLimitPrice': round(price*(1-PARAMS.sl*PARAMS.ratio),2),
+			# 	'stopLimitTimeInForce':'GTC',
+			# 	'trailingDelta': int(PARAMS.sl*10000),
+			# 	'recvWindow': 60000
+			# }
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'BUY',
+				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityShort,
-				'price': round(price*0.8,2),
-				'stopPrice': round(price*(1+PARAMS.sl),2),
-				'stopLimitPrice': round(price*(1-PARAMS.sl*PARAMS.ratio),2),
-				'stopLimitTimeInForce':'GTC',
+				'price': round(price*1.2,2),
+				'timeInForce': 'GTC',
 				'trailingDelta': int(PARAMS.sl*10000),
 				'recvWindow': 60000
 			}
@@ -86,14 +96,24 @@ class Trader:
 				'quantity': quantityLong,
 				'recvWindow': 60000
 			}
+			# params_stop_trail = {
+			# 	'symbol': f'{self.exchange}EUR',
+			# 	'side': 'SELL',
+			# 	'quantity': quantityLong,
+			# 	'price': round(price*1.2,2),
+			# 	'stopPrice': round(price*(1-PARAMS.sl),2),
+			# 	'stopLimitPrice': round(price*(1+PARAMS.sl*PARAMS.ratio),2),
+			# 	'stopLimitTimeInForce':'GTC',
+			# 	'trailingDelta': int(PARAMS.sl*10000),
+			# 	'recvWindow': 60000
+			# }
 			params_stop_trail = {
 				'symbol': f'{self.exchange}EUR',
 				'side': 'SELL',
+				'type': 'STOP_LOSS_LIMIT',
 				'quantity': quantityLong,
-				'price': round(price*1.2,2),
-				'stopPrice': round(price*(1-PARAMS.sl),2),
-				'stopLimitPrice': round(price*(1+PARAMS.sl*PARAMS.ratio),2),
-				'stopLimitTimeInForce':'GTC',
+				'price': round(price*0.8,2),
+				'timeInForce': 'GTC',
 				'trailingDelta': int(PARAMS.sl*10000),
 				'recvWindow': 60000
 			}
@@ -104,7 +124,7 @@ class Trader:
 			print(1)
 			v = self.client.new_order(**params_order)
 			print(2)
-			v2 = self.client.new_oco_order(**params_stop_trail)
+			v2 = self.client.new_order(**params_stop_trail)
 			print(3)
 		except Exception as e:
 			print(">",e)

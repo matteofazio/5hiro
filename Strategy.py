@@ -30,7 +30,7 @@ class Strategy:
 		return self.strategyManager.checkSignal(self.df)
 
 	def getRawData(self,must_be_new=True): # CONTROLLARE CHE SIA AGGIORNATO
-		STEP = 101
+		STEP = 100
 
 		i = 0
 		while i<10:
@@ -68,9 +68,9 @@ class Strategy:
 
 		angle = talib.LINEARREG_ANGLE(self.df["Close"], timeperiod=48)
 		self.df["angle"] = angle
-		self.df["angleFit"] = savgol_filter(self.df["angle"], 48, 3)
+		self.df["angleFit"] = savgol_filter(self.df["angle"], 47, 3)
 		self.df["angleDerivative"] = ((self.df["angleFit"].diff(periods=3))/3).fillna(0)
-		self.df["angleDerivative"] = savgol_filter(self.df["angleDerivative"], 48, 3)
+		self.df["angleDerivative"] = savgol_filter(self.df["angleDerivative"], 47, 3)
 
 		self.df = self.df[self.attributes]
 

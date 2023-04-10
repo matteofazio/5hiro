@@ -12,17 +12,18 @@ from ta.momentum import *
 from ta.volatility import *
 import requests
 import talib
+from scipy.signal import savgol_filter
 from Strategies import *
 
 class Strategy:
 	def __init__(self, exchange):
 		self.df = -1
 		self.exchange = exchange
-		self.interval = "5m" # hours
+		self.interval = "1h" # hours
 		self.invest = 0.99
 		self.strategyManager = StrategyManager()
 
-		self.attributes = ["CDLENGULFING","roc","bbp","dema"]
+		self.attributes = ["angleFit","angleDerivative"]
 
 	def checkEnter(self, must_be_new=True):
 		self.updateData(must_be_new=must_be_new)
@@ -51,27 +52,34 @@ class Strategy:
 		self.getRawData(must_be_new)
 
 		# Analyzing data
-		roc = ROCIndicator(self.df['Close'])
-		self.df['roc'] = roc.roc()
+		# roc = ROCIndicator(self.df['Close'])
+		# self.df['roc'] = roc.roc()
 
-		upperband, middleband, lowerband = talib.BBANDS(self.df['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
-		self.df["bbup"] = upperband
-		self.df["bblow"] = lowerband
-		self.df["bbp"] = (self.df["Close"]-self.df["bblow"])/(self.df["bbup"]-self.df["bblow"])
+		# upperband, middleband, lowerband = talib.BBANDS(self.df['Close'], timeperiod=5, nbdevup=2, nbdevdn=2, matype=0)
+		# self.df["bbup"] = upperband
+		# self.df["bblow"] = lowerband
+		# self.df["bbp"] = (self.df["Close"]-self.df["bblow"])/(self.df["bbup"]-self.df["bblow"])
 
-		dema = talib.DEMA(self.df["Close"], timeperiod=30)
-		self.df["dema"] = 100*(dema-self.df["Close"])/self.df["Close"]
+		# dema = talib.DEMA(self.df["Close"], timeperiod=30)
+		# self.df["dema"] = 100*(dema-self.df["Close"])/self.df["Close"]
 		
-		candle = "CDLENGULFING"
-		self.df[candle] = getattr(talib, candle)(self.df['Open'], self.df['High'], self.df['Low'], self.df['Close'])
+		# candle = "CDLENGULFING"
+		# self.df[candle] = getattr(talib, candle)(self.df['Open'], self.df['High'], self.df['Low'], self.df['Close'])
+
+		angle = talib.LINEARREG_ANGLE(self.df["Close"], timeperiod=48)
+		self.df["angle"] = angle
+		self.df["angleFit"] = savgol_filter(self.df["angle"], 48, 3)
+		self.df["angleDerivative"] = ((self.df["angleFit"].diff(periods=3))/3).fillna(0)
+		self.df["angleDerivative"] = savgol_filter(self.df["angleDerivative"], 48, 3)
 
 		self.df = self.df[self.attributes]
 
 	def get_current_state(self):
 		self.updateData(must_be_new=False)
 		time = str(self.df.index[-1])
-		bbpValue = str(round(self.df["bbp"].iloc[-1],2))
-		r = f"time: {time}, bbp: {bbpValue}"
+		angleFitValue = str(round(self.df["angleFit"].iloc[-1],2))
+		angleDerivativeValue = str(round(self.df["angleDerivative"].iloc[-1],2))
+		r = f"time: {time}, angleFit: {angleFitValue}, angleDerivative: {angleDerivativeValue}"
 		return r
 
 # decomment if needed

@@ -3,7 +3,7 @@ import asyncio
 from datetime import datetime, timedelta
 
 class Clock:
-	def __init__(self,interval=5):
+	def __init__(self,interval="1h"):
 		# time parameters
 		self.interval = interval
 		self.intervalTime = 5 # minuti

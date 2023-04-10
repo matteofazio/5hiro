@@ -7,7 +7,7 @@ import os
 class Trader:
 	def __init__(self,exchange):
 		self.exchange = exchange
-		self.LOT_STEP = 10**5 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4,
+		self.LOT_STEP = 10**2 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4,
 
 		# dati api
 		self.api_key = os.environ['API_KEY']
@@ -122,15 +122,16 @@ class Trader:
 		v3 = "-"
 		try:
 			print(1)
-			v = self.client.new_order(**params_order)
+			# v = self.client.new_order(**params_order)
 			print(2)
-			v2 = self.client.new_order(**params_stop_trail)
+			# v2 = self.client.new_order(**params_stop_trail)
 			print(3)
 		except Exception as e:
 			print(">",e)
 			v3 = str(e)
 		# add stopcalls
-		return f"{v}\n{v2}\n{v3}"
+		# return f"{v}\n{v2}\n{v3}"
+		return f"{params_order}\n{params_stop_trail}\n{v3}"
 
 
 	# ======== Useful non necessary requests ======== #

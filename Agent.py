@@ -4,7 +4,7 @@ import Trader as TraderLib
 
 class Agent:
 	def __init__(self):
-		self.exchange = "BTC"
+		self.exchange = "SOL"
 		print("b1")
 		self.Trader = TraderLib.Trader(self.exchange)
 		print("b2")
@@ -36,12 +36,14 @@ class Agent:
 			if self.Trader.lockedMoney!=0 or self.Trader.lockedStocks!=0:
 				break
 			sleep(10)
+			if True: # da togliere
+				break
 			k += 1
-		if k==MAX_k:
-			raise Exception("Oderd didn't go through? Check.")
+		# if k==MAX_k:
+		# 	raise Exception("Oderd didn't go through? Check.")
 
 		if k==MAX_k:
-			return [True,"Transaction had a problem. Check."]
+			return [True,f"Transaction had a problem. Check. {result}"]
 		else:
 			return [True,f"Strategy:{self.strategy}, result:{result}"] # da cambiare in self.strategy
 

@@ -12,13 +12,14 @@ class Agent:
 		print("b3")
 
 		self.strategy = "-"
+		self.cryptoTolerance = 0.05
 
 	def dentro(self):
 		# NOTA: non c'e' una necessita' nel non mettere ordini contrastanti
 		# visto che funzionano in parallelo, ma logicamente e' una buona idea, forse
 		money,stocks = self.Trader.get_balance()
-		long_position = self.Trader.lockedMoney!=0
-		short_position = self.Trader.lockedStocks!=0
+		long_position = self.Trader.stocks>self.cryptoTolerance
+		short_position = self.Trader.stocks<self.cryptoTolerance
 		return long_position or short_position
 
 	def buy(self, short, PARAMS):
@@ -33,7 +34,7 @@ class Agent:
 			self.Trader.get_balance()
 			# THIS MUST BE UPDATED WITH BETTER CONTROL
 			# here I should check the buy and trailing stop order individually
-			if self.Trader.lockedMoney!=0 or self.Trader.lockedStocks!=0:
+			if abs(self.Trader.stocks)>self.cryptoTolerance:
 				break
 			sleep(10)
 			k += 1

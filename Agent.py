@@ -19,7 +19,7 @@ class Agent:
 		# visto che funzionano in parallelo, ma logicamente e' una buona idea, forse
 		money,stocks = self.Trader.get_balance()
 		long_position = self.Trader.stocks>self.cryptoTolerance
-		short_position = self.Trader.stocks<self.cryptoTolerance
+		short_position = self.Trader.stocks<-self.cryptoTolerance
 		return long_position or short_position
 
 	def buy(self, short, PARAMS):

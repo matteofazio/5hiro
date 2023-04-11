@@ -36,8 +36,6 @@ class Agent:
 			if self.Trader.lockedMoney!=0 or self.Trader.lockedStocks!=0:
 				break
 			sleep(10)
-			if True: # da togliere
-				break
 			k += 1
 		# if k==MAX_k:
 		# 	raise Exception("Oderd didn't go through? Check.")

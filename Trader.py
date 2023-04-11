@@ -16,7 +16,7 @@ class Trader:
 
 		# portfolio statistics
 		self.staticMoney = 5
-		self.staticCrypto = 0.72 # 15 eur roughly
+		self.staticCrypto = 0.71928000 # 15 eur roughly
 		self.money = 0
 		self.lockedMoney = 0
 		self.stocks = 0
@@ -78,16 +78,16 @@ class Trader:
 			# 	'trailingDelta': int(PARAMS.sl*10000),
 			# 	'recvWindow': 60000
 			# }
-			params_stop_trail = {
-				'symbol': f'{self.exchange}EUR',
-				'side': 'BUY',
-				'type': 'STOP_LOSS_LIMIT',
-				'quantity': quantityShort,
-				'price': round(price*1.2,2),
-				'timeInForce': 'GTC',
-				'trailingDelta': int(PARAMS.sl*10000),
-				'recvWindow': 60000
-			}
+			# params_stop_trail = {
+			# 	'symbol': f'{self.exchange}EUR',
+			# 	'side': 'BUY',
+			# 	'type': 'STOP_LOSS_LIMIT',
+			# 	'quantity': quantityShort,
+			# 	'price': round(price*1.2,2),
+			# 	'timeInForce': 'GTC',
+			# 	'trailingDelta': int(PARAMS.sl*10000),
+			# 	'recvWindow': 60000
+			# }
 		else:
 			params_order = {
 				'symbol': f'{self.exchange}EUR',
@@ -107,25 +107,25 @@ class Trader:
 			# 	'trailingDelta': int(PARAMS.sl*10000),
 			# 	'recvWindow': 60000
 			# }
-			params_stop_trail = {
-				'symbol': f'{self.exchange}EUR',
-				'side': 'SELL',
-				'type': 'STOP_LOSS_LIMIT',
-				'quantity': quantityLong,
-				'price': round(price*0.8,2),
-				'timeInForce': 'GTC',
-				'trailingDelta': int(PARAMS.sl*10000),
-				'recvWindow': 60000
-			}
+			# params_stop_trail = {
+			# 	'symbol': f'{self.exchange}EUR',
+			# 	'side': 'SELL',
+			# 	'type': 'STOP_LOSS_LIMIT',
+			# 	'quantity': quantityLong,
+			# 	'price': round(price*0.8,2),
+			# 	'timeInForce': 'GTC',
+			# 	'trailingDelta': int(PARAMS.sl*10000),
+			# 	'recvWindow': 60000
+			# }
 		v = "-"
 		v2 = "-"
 		v3 = "-"
 		try:
 			print(1)
-			# v = self.client.new_order(**params_order)
+			v = self.client.new_order(**params_order)
 			print(2)
 			# v2 = self.client.new_order(**params_stop_trail)
-			print(3)
+			# print(3)
 		except Exception as e:
 			print(">",e)
 			v3 = str(e)

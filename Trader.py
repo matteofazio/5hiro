@@ -131,7 +131,7 @@ class Trader:
 			v3 = str(e)
 		# add stopcalls
 		# return f"{v}\n{v2}\n{v3}"
-		return f"{params_order}\n{params_stop_trail}\n{v3}"
+		return f"{params_order}\n{v3}"
 
 
 	# ======== Useful non necessary requests ======== #

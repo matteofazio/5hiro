@@ -30,7 +30,7 @@ class Strategy:
 		return self.strategyManager.checkSignal(self.df)
 
 	def getRawData(self,must_be_new=True): # CONTROLLARE CHE SIA AGGIORNATO
-		STEP = 100
+		STEP = 200
 
 		i = 0
 		while i<10:

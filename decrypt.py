@@ -4,15 +4,19 @@ import os
 key = os.environ['FERNET']
 fernet = Fernet(key)
 
+files = ["service","Clock","Bot","Agent","Trader","Strategy","Strategies"]
+
 # decrypting
-print("Loading crypted strategies...")
-f = open("Strategies.enc","rb")
-text = f.read()
-f.close()
-f = open("Strategies.py","wb")
-f.write(fernet.decrypt(text))
-f.close()
-print("Strategies decrypted.")
+if False:
+	print("Loading crypted files...")
+	for i in files:
+		f = open(f"{i}.enc","rb")
+		text = f.read()
+		f.close()
+		f = open(f"{i}.py","wb")
+		f.write(fernet.decrypt(text))
+		f.close()
+	print("Files decrypted.")
 
 # decrypting
 # print("Loading crypted model...")

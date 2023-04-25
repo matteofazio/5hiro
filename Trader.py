@@ -7,7 +7,7 @@ import os
 class Trader:
 	def __init__(self,exchange):
 		self.exchange = exchange
-		self.LOT_STEP = 10**2 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4,
+		self.LOT_STEP = 10**4 # for SOL is 10**2, for BTC is 10**5, for ETH is 10**4,
 
 		# dati api
 		self.api_key = os.environ['API_KEY']

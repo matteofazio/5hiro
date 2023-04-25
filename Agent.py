@@ -4,7 +4,7 @@ import Trader as TraderLib
 
 class Agent:
 	def __init__(self):
-		self.exchange = "SOL"
+		self.exchange = "ETH"
 		print("b1")
 		self.Trader = TraderLib.Trader(self.exchange)
 		print("b2")

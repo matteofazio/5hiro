@@ -7,7 +7,7 @@ fernet = Fernet(key)
 files = ["service","Clock","Bot","Agent","Trader","Strategy","Strategies"]
 
 # decrypting
-if False:
+if True:
 	print("Loading crypted files...")
 	for i in files:
 		f = open(f"{i}.enc","rb")
